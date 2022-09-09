@@ -7,8 +7,8 @@
         <ros2_control name="${name}" type="system">
 
             <hardware>
-                <!-- <plugin>mock_components/GenericSystem</plugin> -->
-                <plugin>scara_hardware/ScaraSimulatedHardwareInterface</plugin>
+                <plugin>mock_components/GenericSystem</plugin>
+                <!-- <plugin>scara_hardware/ScaraSimulatedHardwareInterface</plugin> -->
             </hardware>
 
             <joint name="joint1">
