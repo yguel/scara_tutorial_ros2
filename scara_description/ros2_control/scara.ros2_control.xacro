@@ -7,38 +7,43 @@
         <ros2_control name="${name}" type="system">
 
             <hardware>
-                <plugin>mock_components/GenericSystem</plugin>
-                <!-- <plugin>scara_hardware/ScaraSimulatedHardwareInterface</plugin> -->
+                <plugin>scara_hardware/ScaraSimulatedHardwareInterface</plugin>
             </hardware>
 
             <joint name="joint1">
                 <command_interface name="position" />
-                    <param name="min">-1.57</param>
-                    <param name="max">1.57</param>
                 <state_interface name="position">
                     <param name="initial_value">${initial_positions['joint1']}</param>
+                    <param name="min">-1.57</param>
+                    <param name="max">1.57</param>
                 </state_interface>
-                <state_interface name="velocity"/>
+                <state_interface name="velocity"> 
+                    <param name="initial_value">0.0</param> 
+                </state_interface>
                 <state_interface name="effort"/>
             </joint>
             <joint name="joint2">
-                <command_interface name="position" />
-                    <param name="min">-1.57</param>
-                    <param name="max">1.57</param>
+                <command_interface name="position"/>
                 <state_interface name="position">
                     <param name="initial_value">${initial_positions['joint2']}</param>
+                    <param name="min">-1.57</param>
+                    <param name="max">1.57</param>
                 </state_interface>
-                <state_interface name="velocity"/>
+                <state_interface name="velocity"> 
+                    <param name="initial_value">0.0</param> 
+                </state_interface>
                 <state_interface name="effort"/>
             </joint>
             <joint name="joint3">
-                <command_interface name="position" />
-                    <param name="min">0</param>
-                    <param name="max">0.3</param>
+                <command_interface name="position"/>
                 <state_interface name="position">
                     <param name="initial_value">${initial_positions['joint3']}</param>
+                    <param name="min">0</param>
+                    <param name="max">0.3</param>
                 </state_interface>
-                <state_interface name="velocity"/>
+                <state_interface name="velocity"> 
+                    <param name="initial_value">0.0</param> 
+                </state_interface>
                 <state_interface name="effort"/>
             </joint>
         </ros2_control>

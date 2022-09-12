@@ -126,9 +126,9 @@ CallbackReturn ScaraSimulatedHardwareInterface::on_activate(const rclcpp_lifecyc
   RCLCPP_INFO(rclcpp::get_logger("ScaraSimulatedHardwareInterface"), "Starting ...please wait...");
 
   for (uint i = 0; i < info_.joints.size(); i++) {
-    hw_states_position_[i] = 0;
-    hw_states_previous_position_[i] = 0;
-    hw_states_velocity_[i] = 0;
+    hw_states_position_[i] = std::stod(info_.joints[i].state_interfaces[0].initial_value);
+    hw_states_previous_position_[i] = std::stod(info_.joints[i].state_interfaces[0].initial_value);
+    hw_states_velocity_[i] = std::stod(info_.joints[i].state_interfaces[1].initial_value);
   }
 
   RCLCPP_INFO(rclcpp::get_logger("ScaraSimulatedHardwareInterface"), "System Successfully started!");
@@ -174,7 +174,13 @@ hardware_interface::return_type ScaraSimulatedHardwareInterface::write(
 
   if (!isNan) {
     for (uint i = 0; i < info_.joints.size(); i++) {
-        hw_states_position_[i] = hw_commands_position_[i];
+      double min_position = std::stod(info_.joints[i].state_interfaces[0].min);
+      double max_position = std::stod(info_.joints[i].state_interfaces[0].max);
+
+      hw_states_position_[i] = hw_commands_position_[i];
+
+      if(hw_states_position_[i] > max_position) hw_states_position_[i] = max_position;
+      if(hw_states_position_[i] < min_position) hw_states_position_[i] = min_position;
     }
   }
 
