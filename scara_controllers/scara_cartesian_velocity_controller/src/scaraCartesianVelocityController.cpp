@@ -191,13 +191,6 @@ controller_interface::return_type ScaraCartesianVelocityController::update(
     
     Eigen::Vector3d command = q + vq*(period.nanoseconds()*1e-9);
 
-    if(command(0) > 1.57) command(0) = 1.57;
-    if(command(0) < -1.57) command(0) = -1.57;
-    if(command(1) > 1.57) command(1) = 1.57;
-    if(command(1) < -1.57) command(1) = -1.57;
-    if(command(2) > 0.3) command(2) = 0.3;
-    if(command(2) < 0) command(2) = 0;
-
     command_interfaces_[0].set_value(command(0));
     command_interfaces_[1].set_value(command(1));
     command_interfaces_[2].set_value(command(2));
