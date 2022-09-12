@@ -8,6 +8,9 @@ controller_manager:
     scara_cartesian_velocity_controller:
       type: scara_cartesian_velocity_controller/ScaraCartesianVelocityController
 
+    scara_joint_velocity_controller:
+      type: scara_joint_velocity_controller/ScaraJointVelocityController
+
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
@@ -23,6 +26,13 @@ scara_arm_controller:
       - joint3
 
 scara_cartesian_velocity_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+      - joint3
+
+scara_joint_velocity_controller:
   ros__parameters:
     joints:
       - joint1

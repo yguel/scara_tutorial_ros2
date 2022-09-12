@@ -1,0 +1,9 @@
+<library path="scara_joint_velocity_controller">
+  <class name="scara_joint_velocity_controller/ScaraJointVelocityController"
+        type="scara_joint_velocity_controller::ScaraJointVelocityController" 
+        base_class_type="controller_interface::ControllerInterface">
+  <description>
+    The scara_joint_velocity_controller commands the joint velocity of the scara robot through the joint position interface.
+  </description>
+  </class>
+</library>
