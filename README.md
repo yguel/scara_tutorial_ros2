@@ -1,9 +1,9 @@
 # Scara tutorial ROS2
 
 This tutorial is made to understand the basic concepts of controlling a robot using ros2_control. In particular, it describes how to :
-- Write a URDF description of a simple SCARA manipulator 
+- Write a URDF description of a simple SCARA manipulator
+- Launch and interact with the SCARA robot 
 - Write a custom hardware interface for the SCARA robot
-- Launch and interact with the SCARA robot
 - Write a custom velocity controller in joint-space and cartesian-space
 - Set up the SCARA manipulator to run with ros2_control and Gazebo 
 
@@ -170,9 +170,97 @@ In this xml description:
 
 The hardware interface that can be loaded here as a plugin is dependant of the type of robot that is controlled and its control mode. It is an interface between ros2_control and the robot driver. For robots that support ros2_control, the interface is often given either by the manufacturer or the community. A non exhaustive list of available hardware interfaces can be found [here](https://control.ros.org/master/doc/supported_robots/supported_robots.html). 
 
-In the case if the hardware interface is not available or not suited for the desired application, it can be developed in a custom way, what is the topic of the next section.
+
+## Launching and interacting with the Scara robot
+### Creating a launch file
+
+```python
+robot_description_content = Command([
+    PathJoinSubstitution([FindExecutable(name='xacro')]),
+    ' ',
+    PathJoinSubstitution(
+        [FindPackageShare('scara_description'), 'config', 'scara.config.xacro']
+    ),
+])
+robot_description = {'robot_description': robot_description_content}
+```
+
+```python
+robot_controllers = PathJoinSubstitution(
+    [
+        FindPackageShare('scara_description'),
+        'config',
+        'scara_controllers.yaml',
+    ]
+)
+```
+With this done, we can now create a node running the ros2_control controller manager as follows:
+```python
+control_node = Node(
+        package='controller_manager',
+        executable='ros2_control_node',
+        parameters=[robot_description, robot_controllers],
+        output='both',
+    )
+```
+
+See [here](scara_bringup/launch/scara.launch.py) for the complete launch file used for this tutorial. 
+
+### Running and interacting with the scara robot
+
+After building your workspace, you can run the launch file using:
+```shell
+$ ros2 launch scara_bringup scara.launch.py 
+```
+A RViz2 window should open and display the robot.
+![scara model](resources/scara_rviz.png)
+
+The ros2_control framework comes with some command line functionalities that allow you to interact with controller manager. For example, to see what are the hardware interfaces that are currently running, run in a new terminal: 
+```shell
+$ ros2 control list_hardware_interfaces
+```
+which should produce the following output: 
+```shell
+command interfaces
+	joint1/position [available] [unclaimed]
+	joint2/position [available] [unclaimed]
+	joint3/position [available] [unclaimed]
+state interfaces
+	joint1/position
+	joint1/velocity
+	joint2/position
+	joint2/velocity
+	joint3/position
+	joint3/velocity
+```
+This shows, as expected from the robot description, that a position command interface is available for all joints and that for each joint there is a position and velocity state interface. Notice also the `unclaimed` flag next to the command interfaces. This flag indicates that no controller was loaded to claim this particular command interface. In fact, if you now run:
+``` shell
+$ ros2 control list_controllers
+```
+it will give you:
+```shell
+joint_state_broadcaster[joint_state_broadcaster/JointStateBroadcaster] active
+```
+This means that only the `joint_state_broadcaster` is currently running. This particular controller is responsible for reading the states from the hardware and publishing them in the `\joint_states` topic, so that it can be interpreted by the robot state publisher node and displayed in RViz2.  
+
+### Loading and interacting with controllers
+
+```shell
+$ ros2 control load_controller scara_position_controller --set-state active
+```
+
+The loading of a controller can also be done directly at startup in the launch file:
+```python
+controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['<controller_name>'],
+    )
+```
 
 ## Writing of a hardware interface
+
+In the case if the hardware interface is not available or not suited for the desired application, it can be developed in a custom way, what is the topic of the next section.
 
 In ros2_control, hardware system components are integrated via user defined driver plugins that conform to the `HarwareInterface` public interface. Hardware plugins specified in the URDF are dynamically loaded during initialization using the `pluginlib` interface. More information about creating and using plugins can be found [here](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Pluginlib.html).
 
@@ -367,7 +455,6 @@ Notice that a library is created using the plugin source code just like any othe
 
 Now that our scara robot's hardware is ready to be loaded as a plugin let's run our scara robot!
 
-## Launching and interacting with the Scara robot
 
 
 ## Acknowledgments 
