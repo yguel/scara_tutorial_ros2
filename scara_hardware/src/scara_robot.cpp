@@ -12,30 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "scara_hardware/scaraSimulatedHardwareInterface.hpp"
+#include "scara_hardware/scara_robot.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace scara_hardware
 {
 // ------------------------------------------------------------------------------------------
-CallbackReturn ScaraSimulatedHardwareInterface::on_init(
+CallbackReturn ScaraRobot::on_init(
   const hardware_interface::HardwareInfo & info)
 {
   if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
     return CallbackReturn::ERROR;
   }
-
+  // Allocate memory
   hw_states_position_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_states_velocity_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_states_effort_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_states_previous_position_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_commands_position_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
 
+  // Check description compatibility
   for (const hardware_interface::ComponentInfo & joint : info_.joints) {
-    // scaraRobot has currently exactly 3 state and 1 command interface on each joint
+    // scaraRobot has currently exactly 2 state and 1 command interface on each joint
     if (joint.command_interfaces.size() != 1) {
       RCLCPP_FATAL(
-        rclcpp::get_logger("ScaraSimulatedHardwareInterface"),
+        rclcpp::get_logger("ScaraRobot"),
         "Joint '%s' has %li command interfaces found. 1 expected.", joint.name.c_str(),
         joint.command_interfaces.size());
       return CallbackReturn::ERROR;
@@ -43,47 +44,47 @@ CallbackReturn ScaraSimulatedHardwareInterface::on_init(
     if (joint.command_interfaces[0].name != hardware_interface::HW_IF_POSITION)
       {
         RCLCPP_FATAL(
-          rclcpp::get_logger("ScaraSimulatedHardwareInterface"),
+          rclcpp::get_logger("ScaraRobot"),
           "Joint '%s' has %s command interfaces. '%s' expected", joint.name.c_str(),
           joint.command_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION);
         return CallbackReturn::ERROR;
       }
 
-    if (joint.state_interfaces.size() != 3) {
+    if (joint.state_interfaces.size() != 2) {
       RCLCPP_FATAL(
-        rclcpp::get_logger("ScaraSimulatedHardwareInterface"),
-        "Joint '%s' has %li state interface. 3 expected.", joint.name.c_str(),
+        rclcpp::get_logger("ScaraRobot"),
+        "Joint '%s' has %li state interface. 2 expected.", joint.name.c_str(),
         joint.state_interfaces.size());
       return CallbackReturn::ERROR;
     }
 
     if (joint.state_interfaces[0].name != hardware_interface::HW_IF_POSITION) {
       RCLCPP_FATAL(
-        rclcpp::get_logger("ScaraSimulatedHardwareInterface"),
+        rclcpp::get_logger("ScaraRobot"),
         "Joint '%s' have %s state interface. '%s' expected.", joint.name.c_str(),
         joint.state_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION);
       return CallbackReturn::ERROR;
     }
     if (joint.state_interfaces[1].name != hardware_interface::HW_IF_VELOCITY) {
       RCLCPP_FATAL(
-        rclcpp::get_logger("ScaraSimulatedHardwareInterface"),
+        rclcpp::get_logger("ScaraRobot"),
         "Joint '%s' have %s state interface. '%s' expected.", joint.name.c_str(),
         joint.state_interfaces[0].name.c_str(), hardware_interface::HW_IF_VELOCITY);
       return CallbackReturn::ERROR;
     }
-    if (joint.state_interfaces[2].name != hardware_interface::HW_IF_EFFORT) {
-      RCLCPP_FATAL(
-        rclcpp::get_logger("ScaraSimulatedHardwareInterface"),
-        "Joint '%s' have %s state interface. '%s' expected.", joint.name.c_str(),
-        joint.state_interfaces[0].name.c_str(), hardware_interface::HW_IF_EFFORT);
-      return CallbackReturn::ERROR;
-    }
+  }
+
+  // initialize states
+  for (uint i = 0; i < info_.joints.size(); i++) {
+    hw_states_position_[i] = std::stod(info_.joints[i].state_interfaces[0].initial_value);
+    hw_states_previous_position_[i] = std::stod(info_.joints[i].state_interfaces[0].initial_value);
+    hw_states_velocity_[i] = std::stod(info_.joints[i].state_interfaces[1].initial_value);
   }
   return CallbackReturn::SUCCESS;
 }
 // ------------------------------------------------------------------------------------------
 std::vector<hardware_interface::StateInterface>
-ScaraSimulatedHardwareInterface::export_state_interfaces()
+ScaraRobot::export_state_interfaces()
 {
   std::vector<hardware_interface::StateInterface> state_interfaces;
   for (uint i = 0; i < info_.joints.size(); i++) {
@@ -98,18 +99,12 @@ ScaraSimulatedHardwareInterface::export_state_interfaces()
         info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &hw_states_velocity_[i]));
 
   }
-  for (uint i = 0; i < info_.joints.size(); i++) {
-    state_interfaces.emplace_back(
-      hardware_interface::StateInterface(
-        info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_states_effort_[i]));
-
-  }
 
   return state_interfaces;
 }
 // ------------------------------------------------------------------------------------------
 std::vector<hardware_interface::CommandInterface>
-ScaraSimulatedHardwareInterface::export_command_interfaces()
+ScaraRobot::export_command_interfaces()
 {
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   for (uint i = 0; i < info_.joints.size(); i++) {
@@ -121,33 +116,7 @@ ScaraSimulatedHardwareInterface::export_command_interfaces()
   return command_interfaces;
 }
 // ------------------------------------------------------------------------------------------
-CallbackReturn ScaraSimulatedHardwareInterface::on_activate(const rclcpp_lifecycle::State & /* previous_state */)
-{
-  RCLCPP_INFO(rclcpp::get_logger("ScaraSimulatedHardwareInterface"), "Starting ...please wait...");
-
-  for (uint i = 0; i < info_.joints.size(); i++) {
-    hw_states_position_[i] = std::stod(info_.joints[i].state_interfaces[0].initial_value);
-    hw_states_previous_position_[i] = std::stod(info_.joints[i].state_interfaces[0].initial_value);
-    hw_states_velocity_[i] = std::stod(info_.joints[i].state_interfaces[1].initial_value);
-  }
-
-  RCLCPP_INFO(rclcpp::get_logger("ScaraSimulatedHardwareInterface"), "System Successfully started!");
-
-  return CallbackReturn::SUCCESS;
-}
-// ------------------------------------------------------------------------------------------
-CallbackReturn ScaraSimulatedHardwareInterface::on_deactivate(
-  const rclcpp_lifecycle::State & /* previous_state */)
-{
-  RCLCPP_INFO(rclcpp::get_logger("ScaraSimulatedHardwareInterface"), "Stopping ...please wait...");
-
-  RCLCPP_INFO(
-    rclcpp::get_logger("ScaraSimulatedHardwareInterface"), "System successfully stopped!");
-
-  return CallbackReturn::SUCCESS;
-}
-// ------------------------------------------------------------------------------------------
-hardware_interface::return_type ScaraSimulatedHardwareInterface::read(
+hardware_interface::return_type ScaraRobot::read(
   const rclcpp::Time & /*time*/,
   const rclcpp::Duration & period)
 {
@@ -160,7 +129,7 @@ hardware_interface::return_type ScaraSimulatedHardwareInterface::read(
   return hardware_interface::return_type::OK;
 }
 // ------------------------------------------------------------------------------------------
-hardware_interface::return_type ScaraSimulatedHardwareInterface::write(
+hardware_interface::return_type ScaraRobot::write(
   const rclcpp::Time & /*time*/,
   const rclcpp::Duration & /*period*/)
 {
@@ -192,4 +161,4 @@ hardware_interface::return_type ScaraSimulatedHardwareInterface::write(
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
-  scara_hardware::ScaraSimulatedHardwareInterface, hardware_interface::SystemInterface)
+  scara_hardware::ScaraRobot, hardware_interface::SystemInterface)

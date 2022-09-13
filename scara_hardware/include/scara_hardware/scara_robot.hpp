@@ -32,10 +32,10 @@ using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface
 
 namespace scara_hardware
 {
-class ScaraSimulatedHardwareInterface : public hardware_interface::SystemInterface
+class ScaraRobot : public hardware_interface::SystemInterface
 {
 public:
-  RCLCPP_SHARED_PTR_DEFINITIONS(ScaraSimulatedHardwareInterface);
+  RCLCPP_SHARED_PTR_DEFINITIONS(ScaraRobot);
 
   SCARA_HARDWARE_PUBLIC
   CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
@@ -45,12 +45,6 @@ public:
 
   SCARA_HARDWARE_PUBLIC
   std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
-
-  SCARA_HARDWARE_PUBLIC
-  CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state) override;
-
-  SCARA_HARDWARE_PUBLIC
-  CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
 
   SCARA_HARDWARE_PUBLIC
   hardware_interface::return_type read(

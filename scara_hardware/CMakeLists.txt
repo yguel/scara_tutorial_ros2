@@ -21,7 +21,7 @@ find_package(rclcpp_lifecycle REQUIRED)
 add_library(
   ${PROJECT_NAME}
   SHARED
-  src/scaraSimulatedHardwareInterface.cpp
+  src/scara_robot.cpp
 )
 target_include_directories(
   ${PROJECT_NAME}

@@ -1,6 +1,6 @@
 <library path="scara_hardware">
-  <class name="scara_hardware/ScaraSimulatedHardwareInterface"
-         type="scara_hardware::ScaraSimulatedHardwareInterface"
+  <class name="scara_hardware/ScaraRobot"
+         type="scara_hardware::ScaraRobot"
          base_class_type="hardware_interface::SystemInterface">
     <description>
       Hardware Interface of a simulated scara robot.
