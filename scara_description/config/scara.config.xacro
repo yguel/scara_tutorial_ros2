@@ -1,20 +1,14 @@
 <?xml version="1.0"?>
-<!-- Kuka scara 7DoF manipulator -->
+<!-- Scara manipulator -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="scara">
-
-    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
 
     <!-- Import scara urdf file -->
     <xacro:include filename="$(find scara_description)/urdf/scara.urdf" />
 
     <!-- Import scara materials file -->
-    <xacro:include filename="$(find scara_description)/config/materials.xacro" />
+    <xacro:include filename="$(find scara_description)/config/materials.urdf" />
 
     <!-- Import scara ros2_control description -->
-    <xacro:include filename="$(find scara_description)/ros2_control/scara.ros2_control.xacro" />
-
-    <xacro:scara_r2c_hardware
-        name="scaraRobot"
-        initial_positions_file="$(arg initial_positions_file)"/>
+    <xacro:include filename="$(find scara_description)/ros2_control/scara.ros2_control.urdf" />
 
 </robot>
