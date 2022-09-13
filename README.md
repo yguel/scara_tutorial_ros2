@@ -141,7 +141,7 @@ The ros2_control description is generally formatted as follows:
     <ros2_control name="scara" type="system">
 
         <hardware>
-            <plugin>scara_hardware/ScaraSimulatedHardwareInterface</plugin>
+            <plugin>scara_hardware/ScaraRobot</plugin>
         </hardware>
 
         <joint name="joint1">
@@ -154,7 +154,6 @@ The ros2_control description is generally formatted as follows:
             <state_interface name="velocity"> 
                 <param name="initial_value">0.0</param> 
             </state_interface>
-            <state_interface name="effort"/>
         </joint>
         
         <!-- additional joints -->
@@ -165,8 +164,171 @@ The ros2_control description is generally formatted as follows:
 ```
 In this xml description:
 * The `robot` tag encloses all contents of the URDF file. It has a name attribute which must be specified.
-* The `hardware` and `plugin` tags instruct the ros2_control framework to dynamically load a hardware driver conforming to `HardwareInterface` as a plugin. The plugin is specified as ` <{Name_Space}/{Class_Name}`.
-* The`joint` tag specifies the state and command interfaces that the loaded plugin is will offer. The joint is specified with the name attribute. The `command_interface` and `state_interface` tags specify the interface type, usually position, velocity, acceleration, or effort. 
+* The `hardware` and `plugin` tags instruct the ros2_control framework to dynamically load a hardware driver conforming to `HardwareInterface` as a plugin. The plugin is specified as `{Name_Space}/{Class_Name}`.
+* The`joint` tag specifies the state and command interfaces that the loaded plugin is will offer. The joint is specified with the name attribute. The `command_interface` and `state_interface` tags specify the interface type, usually position, velocity, acceleration, or effort. Additionally, for each interface additional parameters such as `min`, `max` and `initial_value` can be set.  
+
+The hardware interface that can be loaded here as a plugin is dependant of the type of robot that is controlled and its control mode. It is an interface between ros2_control and the robot driver. For robots that support ros2_control, the interface is often given either by the manufacturer or the community. A non exhaustive list of available hardware interfaces can be found [here](https://control.ros.org/master/doc/supported_robots/supported_robots.html). 
+
+In the case if the hardware interface is not available or not suited for the desired application, it can be developed in a custom way, what is the topic of the next section.
+
+## Writing of a hardware interface
+
+In ros2_control, hardware system components are integrated via user defined driver plugins that conform to the `HarwareInterface` public interface. Hardware plugins specified in the URDF are dynamically loaded during initialization using the `pluginlib` interface. More information about creating and using plugins can be found [here](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Pluginlib.html).
+
+For the purpose of this tutorial, let's create the custom interface plugin `ScaraRobot` that will be used to simulate a scara robot. We want the simulated system to be controlled in joint position and provide information about its current position and velocity, as described in the ros2_control description [file](scara_description/ros2_control/scara.ros2_control.urdf).  
+
+To do so, in the `scara_hardware` package, let's first define the hardware plugin called `ScaraRobot` that inherits from  `hardware_interface::SystemInterface`. The `SystemInterface` is one of the offered hardware interfaces designed for a complete robot system. For example, The UR5 uses this interface. The `ScaraRobot` must implement five public methods:
+1. `on_init`
+2. `export_state_interfaces`
+3. `export_command_interfaces`
+4. `read`
+5. `write`
+
+These methods are defined in the [scara_robot.hpp](scara_hardware/include/scara_hardware/scara_robot.hpp) header file as follows: 
+
+```c++
+using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+#include "hardware_interface/types/hardware_interface_return_values.hpp"
+
+class HARDWARE_INTERFACE_PUBLIC ScaraRobot : public hardware_interface::SystemInterface {
+    public:
+    CallbackReturn on_init(const hardware_interface::HardwareInfo &info) override;
+    std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
+    std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
+    return_type read(const rclcpp::Time &time, const rclcpp::Duration &period) override;
+    return_type write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
+    // private members
+    // ...
+}
+```
+
+### Initializing the hardware
+Let's first have a look at the initialization `on_init` method. The `on_init` method is called once during ros2_control initialization if the `ScaraRobot` was specified in the URDF. This method should:
+- Check the validity of the requested `command_interfaces` and `state_interfaces` w.r.t. the loaded driver
+- Instantiate the communication with the robot hardware
+- Allocate memory
+
+Since in this tutorial the robot is simulated, no communication need to be established. Instead, vectors will be initialized that represent the state all the hardware using the initial values from the description file. The definition of this method is as follows: 
+
+```c++
+CallbackReturn ScaraRobot::on_init(const hardware_interface::HardwareInfo &info) {
+    if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
+        return CallbackReturn::ERROR;
+    }
+
+    // allocate memory 
+    hw_states_position_.resize(info_.joints.size() std::numeric_limits<double>::quiet_NaN());
+    //...
+    // check the validity of the description
+    for (const hardware_interface::ComponentInfo & joint : info_.joints) {
+        if (joint.command_interfaces[0].name != hardware_interface::HW_IF_POSITION)
+        {
+            return CallbackReturn::ERROR;
+        }
+    }
+    // ...
+    // initialize states
+    for (uint i = 0; i < info_.joints.size(); i++) {
+        hw_states_position_[i] = std::stod(info_.joints[i].state_interfaces[0].initial_value);
+    }
+    // ...
+    return CallbackReturn::SUCCESS;
+}
+```
+Note that the behavior of `on_init` is expected to vary depending on the URDF description file. The `SystemInterface::on_init(info)` call fills out the `info` object with specifics from the URDF. The `info` object has fields for joints, sensors, gpios, and more. This allows to check if the interface that is called is compatible with the description and use to parameters from the description file to set up the hardware. 
+
+## Exporting interfaces
+
+Next, `export_state_interfaces` and `export_command_interfaces` methods are called in succession. Their purpose is to create a handle to link the internal state/command variable with the ros2_control framework so that it can be accessed from any method. The `export_state_interfaces` method returns a vector of `StateInterface`, describing the `state_interfaces` for each joint. The `StateInterface` objects are read only data handles that contain the interface name, interface type, and a pointer to a double data value of the internal state variable. For the `ScaraRobot`, the `export_state_interfaces` references `hw_states_position_` vector with the position state interface and is defined as follows: 
+```c++
+std::vector<hardware_interface::StateInterface> ScaraRobot::export_state_interfaces() {
+    std::vector<hardware_interface::StateInterface> state_interfaces;
+    for (uint i = 0; i < info_.joints.size(); i++) {
+        state_interfaces.emplace_back(
+            hardware_interface::StateInterface(
+                info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_states_position_[i]));
+    }
+    // ...
+    return state_interfaces;
+}
+```
+The `export_command_interfaces` method is nearly identical to the previous one. The difference is that a vector of `CommandInterface` is returned. The vector contains objects describing the `command_interfaces` for each joint. For the `ScaraRobot`, the `export_command_interfaces` references the `hw_commands_position_` vector with the position command interface and is defined as follows: 
+```c++
+std::vector<hardware_interface::CommandInterface> ScaraRobot::export_command_interfaces() {
+    std::vector<hardware_interface::CommandInterface> command_interfaces;
+    for (uint i = 0; i < info_.joints.size(); i++) {
+        command_interfaces.emplace_back(
+            hardware_interface::CommandInterface(
+                info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_commands_position_[i]));
+    }
+    return command_interfaces;
+}
+```
+
+## Reading and writing from the hardware
+
+The `read` method is core method in the ros2_control loop. During the main loop, ros2_control loops over all hardware components and calls the `read` method. It is executed on the realtime thread, hence the method must obey by realtime constraints. The `read` method is responsible for updating the data values of the `state_interfaces`. Since the data value point to class member variables, those values can be filled with their corresponding sensor values, which will in turn update the values of each exported `StateInterface` object.
+```c++
+return_type ScaraRobot::read(const rclcpp::Time & time, const rclcpp::Duration &period) {
+    // read hardware values for state interfaces, e.g joint encoders and sensor readings
+    // ...
+    return return_type::OK;
+}
+  ```
+The `write` method is another core method in the ros2_control loop. It is called after `update` in the realtime loop. For this reason, it must also obey by realtime constraints. The `write` method is responsible for updating the data values of the `command_interfaces`. As opposed to `read`, `write` accesses data values pointer to by the exported `CommandInterface` objects sends them to the corresponding hardware. For example, if the hardware supports setting a joint velocity via TCP, then this method accesses data of the corresponding `command_interface` and sends a packet with the value.
+```c++
+return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) {
+    // send command interface values to hardware, e.g joint set joint velocity
+    // ...
+    return return_type::OK;
+}
+```
+Finally, all ros2_control plugins should have the following two lines of code at the end of the file.
+```c++
+#include "pluginlib/class_list_macros.hpp"
+
+PLUGINLIB_EXPORT_CLASS(robot_6_dof_hardware::ScaraRobot, hardware_interface::SystemInterface)
+```
+`PLUGINLIB_EXPORT_CLASS` is a c++ macro creates a plugin library using `pluginlib`.
+
+### Plugin description file
+The plugin description file is a required XML file that describes a plugin's library name, class type, namespace, description, and interface type. This file allows the ROS 2 to automatically discover and load plugins.It is formatted as follows.
+
+```xml
+<library path="{Library_Name}">
+  <class
+    name="{Namespace}/{Class_Name}"
+    type="{Namespace}::{Class_Name}"
+    base_class_type="hardware_interface::SystemInterface">
+  <description>
+    {Human readable description}
+  </description>
+  </class>
+</library>
+```
+
+The `path` attribute of the `library` tags refers to the cmake library name of the user defined hardware plugin. See [here](hardware_driver/robot_6_dof_hardware_plugin_description.xml) for the complete XML file.
+
+### CMake library
+The general CMake template to make a hardware plugin available in ros2_control is shown below. Notice that a library is created using the plugin source code just like any other  cmake library. In addition, an extra compile definition and cmake export macro (`pluginlib_export_plugin_description_file`) need to be added. See [here](hardware_driver/CMakeLists.txt) for the complete `CMakeLists.txt` file.
+
+```cmake
+add_library(
+    robot_6_dof_hardware
+    SHARED
+    src/robot_hardware.cpp
+)
+
+# include and link dependencies
+# ...
+
+# Causes the visibility macros to use dllexport rather than dllimport, which is appropriate when building the dll but not consuming it.
+target_compile_definitions(robot_6_dof_hardware PRIVATE "HARDWARE_PLUGIN_DLL")
+# export plugin
+pluginlib_export_plugin_description_file(robot_6_dof_hardware hardware_plugin_plugin_description.xml)
+# install libraries
+# ...
+```
 
 ## Acknowledgments 
 This tutorial is partially inspired from [pac48](https://github.com/pac48/ros2_control_demos/tree/full-example-tutorial)'s tutorial.
