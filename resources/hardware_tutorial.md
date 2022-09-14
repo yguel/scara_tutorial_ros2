@@ -1,4 +1,4 @@
-## Writing of a hardware interface
+## Writing of a Hardware Interface
 
 In the case if the hardware interface is not available or not suited for the desired application, it can be developed in a custom way, what is the topic of the next section.
 

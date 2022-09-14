@@ -4,7 +4,7 @@ This tutorial is made to understand the basic concepts of controlling a robot us
 - [Write a URDF description of a simple SCARA manipulator](resources/urdf_tutorial.md)
 - [Launch and interact with the SCARA robot](resources/launch_tutorial.md) 
 - [Write a custom hardware interface for the SCARA robot](resources/hardware_tutorial.md)
-- Write a custom velocity controller in joint-space and cartesian-space
+- [Write a custom controller for the SCARA robot](resources/controller_tutorial.md)
 - Set up the SCARA manipulator to run with ros2_control and Gazebo 
 
 ![scara model](resources/scara_model.png)

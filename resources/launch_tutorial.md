@@ -91,7 +91,7 @@ After building your workspace, you can run the launch file using:
 $ ros2 launch scara_bringup scara.launch.py 
 ```
 A RViz2 window should open and display the following:
-![scara model](resources/scara_rviz_empty.png)
+![scara model](scara_rviz_empty.png)
 
 This output indicates that the `robot_state_publisher` node does not have any information about the robot current state. This is not an error in the configuration of your robot and is due to the fact that by default, the `controller_manager` node does not load any controllers, including the `joint_state_broadcaster` responsible for sharing the state data with the ROS2 environment. 
 
@@ -126,7 +126,7 @@ what should return;
 Successfully loaded controller joint_state_broadcaster into state active
 ```
 Now have a look at your RViz2 window. It should finally display the expected output:
-![scara model](resources/scara_rviz.png)
+![scara model](scara_rviz.png)
 
 Also, if you run again:
 ``` shell
