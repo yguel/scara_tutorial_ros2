@@ -4,7 +4,8 @@
     <ros2_control name="scara" type="system">
 
         <hardware>
-            <plugin>scara_hardware/ScaraRobot</plugin>
+            <plugin>mock_components/GenericSystem</plugin>
+            <!-- <plugin>scara_hardware/ScaraRobot</plugin> -->
         </hardware>
 
         <joint name="joint1">
