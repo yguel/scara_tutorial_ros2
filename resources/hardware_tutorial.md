@@ -4,7 +4,7 @@ In the case if the hardware interface is not available or not suited for the des
 
 In ros2_control, hardware system components are integrated via user defined driver plugins that conform to the `HarwareInterface` public interface. Hardware plugins specified in the URDF are dynamically loaded during initialization using the `pluginlib` interface. More information about creating and using plugins can be found [here](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Pluginlib.html).
 
-For the purpose of this tutorial, let's create the custom interface plugin `ScaraRobot` that will be used to simulate a scara robot. We want the simulated system to be controlled in joint position and provide information about its current position and velocity, as described in the ros2_control description [file](scara_description/ros2_control/scara.ros2_control.urdf).  
+For the purpose of this tutorial, let's create the custom interface plugin `ScaraRobot` that will be used to simulate a scara robot. We want the simulated system to be controlled in joint position and provide information about its current position and velocity, as described in the ros2_control description [file](../scara_description/ros2_control/scara.ros2_control.urdf).  
 
 To do so, in the `scara_hardware` package, let's first define the hardware plugin called `ScaraRobot` that inherits from  `hardware_interface::SystemInterface`. The `SystemInterface` is one of the offered hardware interfaces designed for a complete robot system. For example, The UR5 uses this interface. The `ScaraRobot` must implement five public methods:
 1. `on_init`
@@ -13,7 +13,7 @@ To do so, in the `scara_hardware` package, let's first define the hardware plugi
 4. `read`
 5. `write`
 
-These methods are defined in the [scara_robot.hpp](scara_hardware/include/scara_hardware/scara_robot.hpp) header file as follows: 
+These methods are defined in the [scara_robot.hpp](../scara_hardware/include/scara_hardware/scara_robot.hpp) header file as follows: 
 
 ```c++
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
@@ -145,7 +145,7 @@ Building the Hardware Interface plugin is done with the following steps:
 * Exporting the CMake library
 
 ### Adding C++ export macro
-In order to reference the previously defined hardware interface as a ros2_control plugin, we need to add the following two lines of code at the end of the [scara_robot.cpp](scara_hardware/src/scara_robot.cpp) file containing our method definitions:
+In order to reference the previously defined hardware interface as a ros2_control plugin, we need to add the following two lines of code at the end of the [scara_robot.cpp](../scara_hardware/src/scara_robot.cpp) file containing our method definitions:
 
 ```c++
 #include "pluginlib/class_list_macros.hpp"
@@ -170,7 +170,7 @@ The plugin description file is a required XML file that describes the plugin's l
 </library>
 ```
 
-The `path` attribute of the `library` tags refers to the cmake library name of the user defined hardware plugin. See [here](scara_hardware/scara_hardware_plugin.xml) for the complete XML file used for this tutorial.
+The `path` attribute of the `library` tags refers to the cmake library name of the user defined hardware plugin. See [here](../scara_hardware/scara_hardware_plugin.xml) for the complete XML file used for this tutorial.
 
 ### Exporting the CMake library
 The general CMake template to make a hardware plugin available in ros2_control is shown below:
@@ -191,10 +191,11 @@ pluginlib_export_plugin_description_file(scara_hardware scara_hardware_plugin.xm
 # install libraries
 # ...
 ```
-Notice that a library is created using the plugin source code just like any other cmake library. In addition, an extra compile definition and cmake export macro (`pluginlib_export_plugin_description_file`) need to be added. See [here](scara_hardware/CMakeLists.txt) for the complete `CMakeLists.txt` file used for this tutorial. 
+Notice that a library is created using the plugin source code just like any other cmake library. In addition, an extra compile definition and cmake export macro (`pluginlib_export_plugin_description_file`) need to be added. See [here](../scara_hardware/CMakeLists.txt) for the complete `CMakeLists.txt` file used for this tutorial. 
 
 Now that our scara robot's hardware is ready to be loaded as a plugin let's run our scara robot!
-To do so you just need to specify your hardware plugin in the ros2_control urdf description [file](scara_description/ros2_control/scara.ros2_control.urdf) as follows:
+
+To do so you just need to specify your hardware plugin in the ros2_control urdf description [file](../scara_description/ros2_control/scara.ros2_control.urdf) as follows:
 ```xml
 <?xml version="1.0"?>
 <robot name = "scara" xmlns:xacro="http://www.ros.org/wiki/xacro">

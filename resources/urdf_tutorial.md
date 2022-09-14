@@ -4,7 +4,7 @@ The URDF file is a standard XML based file used to describe characteristic of a 
 A good practice in ROS2 is to specify the description of the used robot in a dedicated package. In this tutorial, the package is named in a standard way `scara_description`. In this package you can find different folders containing the configuration of the used system for different ROS2 components. 
 
 ### Global URDF description using Xacro
-In order to simplify the setup of the robot we often build the robot URDF description using `xacro`. Xacro (XML Macros) is an XML macro language. With xacro, you can construct shorter and more readable XML files by using macros that expand to larger XML expressions. Using xacro allows to include smaller segments of the system description for better readability. For example, in the case of the scara robot, the global URDF is defined using the [scara.config.xacro](scara_description/config/scara.config.xacro) file, formatted as follows: 
+In order to simplify the setup of the robot we often build the robot URDF description using `xacro`. Xacro (XML Macros) is an XML macro language. With xacro, you can construct shorter and more readable XML files by using macros that expand to larger XML expressions. Using xacro allows to include smaller segments of the system description for better readability. For example, in the case of the scara robot, the global URDF is defined using the [scara.config.xacro](../scara_description/config/scara.config.xacro) file, formatted as follows: 
 ```xml 
 <?xml version="1.0"?>
 <!-- Scara manipulator -->
@@ -29,7 +29,7 @@ In the next sections, let's focus more in details on the included description fi
 
 ### Geometry and Dynamics
 
-In this section, let's focus on the [`scara.urdf`](scara_description/urdf/scara.urdf) description file. The URDF file describes in details the geometry of the robot as well as some additional parameters such as its visual and collision meshes, dynamics and others. 
+In this section, let's focus on the [`scara.urdf`](../scara_description/urdf/scara.urdf) description file. The URDF file describes in details the geometry of the robot as well as some additional parameters such as its visual and collision meshes, dynamics and others. 
 
 The URDF description file is generally formatted as follows: 
 
@@ -120,7 +120,7 @@ In this xml description:
 
 ## Hardware setup for ros2_control
 
-In this section, let's focus on the [`scara.ros2_control.urdf`](scara_description/ros2_control/scara.ros2_control.urdf) description file. This description file is used to set up the ros2_control hardware that will be used to specify the `command_interface` and `state_interface` for each `joint`, `sensor` and/or `gpio`. 
+In this section, let's focus on the [`scara.ros2_control.urdf`](../scara_description/ros2_control/scara.ros2_control.urdf) description file. This description file is used to set up the ros2_control hardware that will be used to specify the `command_interface` and `state_interface` for each `joint`, `sensor` and/or `gpio`. 
 
 The ros2_control description is generally formatted as follows:  
 

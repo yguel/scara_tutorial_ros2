@@ -17,7 +17,7 @@ controller_manager:
 ```
 In the controller configuration file, the `update_rate` parameter allows to set the update rate of the `ControllerManager` node. In addition, the desired controllers that we plan to run need to be referenced and set up. 
 
-In the example of the scara robot, the configuration [file](scara_description/config/scara_controllers.yaml) is the following:  
+In the example of the scara robot, the configuration [file](../scara_description/config/scara_controllers.yaml) is the following:  
 ```yaml
 controller_manager:
   ros__parameters:
@@ -48,7 +48,7 @@ Now that we have the robot URDF description and the configuration for the Contro
 
 ### Creating a launch file
 
-In the [`scara.launch.py`](scara_bringup/launch/scara.launch.py) file, we first need to load the robot description from URDF. As we use XACRO, the global description file [`scara.config.xacro`](scara_description/config/scara.config.xacro) of the robot needs to be evaluated first, what can be achieved as follows:
+In the [`scara.launch.py`](../scara_bringup/launch/scara.launch.py) file, we first need to load the robot description from URDF. As we use XACRO, the global description file [`scara.config.xacro`](../scara_description/config/scara.config.xacro) of the robot needs to be evaluated first, what can be achieved as follows:
 ```python
 robot_description_content = Command([
     PathJoinSubstitution([FindExecutable(name='xacro')]),
@@ -82,7 +82,7 @@ control_node = Node(
 ```
 For the purpose of this tutorial you will also need to launch an `rviz2` node as well as `robot_state_publisher`, which are required to have a visual of the scara robot. 
 
-See [here](scara_bringup/launch/scara.launch.py) for the complete launch file used for this tutorial. 
+See [here](../scara_bringup/launch/scara.launch.py) for the complete launch file used for this tutorial. 
 
 ### Running and interacting with the scara robot
 
@@ -144,7 +144,7 @@ Even though the `joint_state_broadcaster` is a controller, it does not command a
 
 ### Controlling joints with controllers
 
-Let's now focus on another controller that was set up in the [`scara_controllers.yaml`](scara_description/config/scara_controllers.yaml) configuration file. In order to give position commands to the scara robot, load the `scara_position_controller` by running:  
+Let's now focus on another controller that was set up in the [`scara_controllers.yaml`](../scara_description/config/scara_controllers.yaml) configuration file. In order to give position commands to the scara robot, load the `scara_position_controller` by running:  
 ```shell
 $ ros2 control load_controller scara_position_controller --set-state active
 ```
@@ -181,7 +181,7 @@ Notice here that the motion to the desired position was done in one shot, what o
 ### Additional comments on controllers
 In ros2_control, controllers can be loaded, unloaded and switched on runtime without stopping the hardware? This allows you to address the need of applications that have multiple different operating phases. More information can be found [here](https://control.ros.org/master/index.html).
 
-Also, in most applications the controller to be loaded is known from start and therefore it can be loaded directly at startup in the [launch](scara_bringup/launch/scara.launch.py) file by calling the `spawner` node:
+Also, in most applications the controller to be loaded is known from start and therefore it can be loaded directly at startup in the [launch](../scara_bringup/launch/scara.launch.py) file by calling the `spawner` node:
 ```python
 controller_spawner = Node(
         package='controller_manager',

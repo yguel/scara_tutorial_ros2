@@ -194,8 +194,24 @@ CallbackReturn on_error(const rclcpp_lifecycle::State &previous_state){
   return CallbackReturn::SUCCESS;
 }
 ```
-### Plugin description file
-The plugin description file is again required for the control, since it is exported as a library. The controller plugin description file is formatted as follows. See [here](r6bot_controller/robot_6_dof_controller_plugin_description.xml) for the complete XML file.
+## Building the Controller plugin
+Building the Controller plugin is done with the same steps as for the Hardware Interface:
+* Adding C++ export macro 
+* Creating the plugin description file
+* Exporting the CMake library
+
+### Adding C++ export macro
+In order to reference the previously defined controller as a ros2_control plugin, we need to add the following two lines of code at the end of the [scara_joint_velocity_controller.cpp](../scara_controllers/scara_joint_velocity_controller/src/scara_joint_velocity_controller.cpp) file containing our method definitions:
+
+```c++
+#include "pluginlib/class_list_macros.hpp"
+
+PLUGINLIB_EXPORT_CLASS(scara_joint_velocity_controller::ScaraJointVelocityController, controller_interface::ControllerInterface)
+```
+The `PLUGINLIB_EXPORT_CLASS` is a c++ macro that creates a plugin library using `pluginlib`. More information about it can be found [here](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Pluginlib.html).
+
+### Creating the plugin description file
+The plugin description file is again required for the controller, since it is exported as a library. The controller plugin description file is formatted as follows:
 
 ```xml
 <library path="{Library_Name}">
@@ -209,24 +225,52 @@ The plugin description file is again required for the control, since it is expor
   </class>
 </library>
 ```
+ See [here](../scara_controllers/scara_joint_velocity_controller/controller_plugin.xml) for the complete XML file.
 
-### CMake library
-The plugin must be specified in the CMake file that builds the controller plugin. See [here](r6bot_controller/CMakeLists.txt) for the complete `CMakeLists.txt` file.
+### Exporting the CMake library
+The plugin must be specified in the CMake file that builds the controller plugin. 
 
 ```cmake
 add_library(
-    r6bot_controller
+    scara_joint_velocity_controller
     SHARED
-    src/robot_controller.cpp
+    src/scara_joint_velocity_controller.cpp
 )
 
 # include and link dependencies
 # ...
 
 # Causes the visibility macros to use dllexport rather than dllimport, which is appropriate when building the dll but not consuming it.
-target_compile_definitions(r6bot_controller PRIVATE "CONTROLLER_PLUGIN_DLL")
+target_compile_definitions(scara_joint_velocity_controller PRIVATE "CONTROLLER_PLUGIN_DLL")
 # export plugin
-pluginlib_export_plugin_description_file(r6bot_controller robot_6_dof_controller_plugin_description.xml)
+pluginlib_export_plugin_description_file(scara_joint_velocity_controller controller_plugin.xml)
 # install libraries
 # ...
 ```
+
+See [here](../scara_controllers/scara_joint_velocity_controller/CMakeLists.txt) for the complete `CMakeLists.txt` file.
+
+Now that the controller is ready to be used, let's add it to the [scara_controllers.yaml](../scara_description/config/scara_controllers.yaml) file and run it on the scara robot! 
+
+To do so, in the [scara_controllers.yaml](../scara_description/config/scara_controllers.yaml) file add :
+``` yaml
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    # other controllers
+
+    scara_joint_velocity_controller:
+      type: scara_joint_velocity_controller/ScaraJointVelocityController
+
+scara_joint_velocity_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+      - joint3
+
+# other controllers
+```
+
+You can now load and interact with the controller as explained in the previous [section](launch_tutorial.md).
