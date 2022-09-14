@@ -80,7 +80,7 @@ def generate_launch_description():
         rviz_node,
         control_node,
         robot_state_pub_node,
-        joint_state_broadcaster_spawner,
+        # joint_state_broadcaster_spawner,
         # robot_controller_spawner,
     ]
 
