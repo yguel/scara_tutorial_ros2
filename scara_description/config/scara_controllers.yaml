@@ -8,9 +8,6 @@ controller_manager:
     scara_position_controller:
       type: position_controllers/JointGroupPositionController
 
-    scara_cartesian_velocity_controller:
-      type: scara_cartesian_velocity_controller/ScaraCartesianVelocityController
-
     scara_joint_velocity_controller:
       type: scara_joint_velocity_controller/ScaraJointVelocityController
 
@@ -29,13 +26,6 @@ scara_trajectory_controller:
       - joint3
 
 scara_position_controller:
-  ros__parameters:
-    joints:
-      - joint1
-      - joint2
-      - joint3
-
-scara_cartesian_velocity_controller:
   ros__parameters:
     joints:
       - joint1
