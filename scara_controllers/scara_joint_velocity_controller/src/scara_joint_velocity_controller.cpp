@@ -20,8 +20,6 @@
 #include <utility>
 #include <vector>
 
-#include <Eigen/Dense>
-
 #include "rclcpp/logging.hpp"
 #include "rclcpp/qos.hpp"
 
@@ -144,6 +142,24 @@ CallbackReturn ScaraJointVelocityController::on_deactivate(
 {
   return CallbackReturn::SUCCESS;
 }
+
+CallbackReturn ScaraJointVelocityController::on_cleanup(
+  const rclcpp_lifecycle::State & /*previous_state*/)
+{
+  return CallbackReturn::SUCCESS;
+}
+
+CallbackReturn ScaraJointVelocityController::on_error(
+  const rclcpp_lifecycle::State & /*previous_state*/)
+{
+  return CallbackReturn::SUCCESS;
+}
+
+CallbackReturn ScaraJointVelocityController::on_shutdown(
+  const rclcpp_lifecycle::State & /*previous_state*/)
+{
+  return CallbackReturn::SUCCESS;
+}
 // main control loop function getting the state interface and writing to the command interface
 controller_interface::return_type ScaraJointVelocityController::update(
   const rclcpp::Time & /*time*/,
@@ -166,22 +182,15 @@ controller_interface::return_type ScaraJointVelocityController::update(
     return controller_interface::return_type::ERROR;
   }
 
-    // the states are given in the same order as defines in state_interface_configuration
-    Eigen::Vector3d q;
-    q << state_interfaces_[0].get_value(),
-        state_interfaces_[1].get_value(),
-        state_interfaces_[2].get_value();
+  // the states are given in the same order as defines in state_interface_configuration
+  for(auto j = 0ul; j < joint_names_.size(); j++){
+    double q = state_interfaces_[j].get_value();
+    double vq = (*joint_velocity)->data[j];
 
-    Eigen::Vector3d vq;
-    vq << (*joint_velocity)->data[0], 
-        (*joint_velocity)->data[1], 
-        (*joint_velocity)->data[2];
+    double command = q + vq*(period.nanoseconds()*1e-9);
     
-    Eigen::Vector3d command = q + vq*(period.nanoseconds()*1e-9);
-
-    command_interfaces_[0].set_value(command(0));
-    command_interfaces_[1].set_value(command(1));
-    command_interfaces_[2].set_value(command(2));
+    command_interfaces_[j].set_value(command);
+  }
 
   return controller_interface::return_type::OK;
 }
