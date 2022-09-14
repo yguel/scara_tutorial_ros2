@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "scara_joint_velocity_controller/scaraJointVelocityController.hpp"
+#include "scara_joint_velocity_controller/scara_joint_velocity_controller.hpp"
 
 #include <algorithm>
 #include <cmath>

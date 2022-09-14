@@ -25,7 +25,7 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 add_library(scara_joint_velocity_controller
   SHARED
-  src/scaraJointVelocityController.cpp
+  src/scara_joint_velocity_controller.cpp
 )
 target_include_directories(scara_joint_velocity_controller PRIVATE include)
 ament_target_dependencies(scara_joint_velocity_controller
