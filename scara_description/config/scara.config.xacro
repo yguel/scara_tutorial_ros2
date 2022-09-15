@@ -11,4 +11,7 @@
     <!-- Import scara ros2_control description -->
     <xacro:include filename="$(find scara_description)/ros2_control/scara.ros2_control.urdf" />
 
+    <!-- Import all Gazebo-customization elements -->
+    <xacro:include filename="$(find scara_description)/gazebo/scara.gazebo.xacro"/>
+
 </robot>

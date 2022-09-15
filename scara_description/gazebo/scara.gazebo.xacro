@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="scara">
+    <!-- ros_control plugin -->
+    <gazebo>
+      <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+        <parameters>$(find scara_description)/config/scara_controllers.yaml</parameters>
+      </plugin>
+    </gazebo>
+    <!-- Used for fixing robot -->
+    <gazebo reference="world">
+        <static>true</static>
+    </gazebo>
+
+    <!-- color -->
+    <gazebo reference="base_link">
+      <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <gazebo reference="revolute1">
+      <material>Gazebo/Green</material>
+    </gazebo>
+
+    <gazebo reference="link1">
+      <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <gazebo reference="revolute2">
+      <material>Gazebo/Green</material>
+    </gazebo>
+
+    <gazebo reference="link2">
+      <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <gazebo reference="prismatic3">
+      <material>Gazebo/Orange</material>
+    </gazebo>
+
+    <gazebo reference="link3">
+      <material>Gazebo/Blue</material>
+    </gazebo>
+
+</robot>

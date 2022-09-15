@@ -27,7 +27,7 @@ endif()
 # Install
 ################################################################################
 install(
-  DIRECTORY urdf ros2_control config rviz
+  DIRECTORY urdf ros2_control config rviz gazebo
   DESTINATION share/${PROJECT_NAME}
 )
 
