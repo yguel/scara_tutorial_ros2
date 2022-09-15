@@ -4,6 +4,7 @@
     <gazebo>
       <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
         <parameters>$(find scara_description)/config/scara_controllers.yaml</parameters>
+        <robot_param_node>robot_state_publisher</robot_param_node>
       </plugin>
     </gazebo>
     <!-- Used for fixing robot -->

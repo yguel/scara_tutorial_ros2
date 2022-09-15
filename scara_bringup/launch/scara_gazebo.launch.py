@@ -60,7 +60,7 @@ def generate_launch_description():
                     'launch', 'gazebo.launch.py']
             )]
         ),
-        launch_arguments={'verbose': 'true'}.items(),
+        launch_arguments={'verbose': 'false'}.items(),
     )
 
     spawn_entity = Node(
