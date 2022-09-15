@@ -53,11 +53,6 @@ def generate_launch_description():
         arguments=['-d', rviz_config_file],
     )
 
-    simulation_world = PathJoinSubstitution(
-        [FindPackageShare('scara_description'),
-            'gazebo/worlds', 'empty.world']
-    )
-
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [PathJoinSubstitution(
@@ -65,7 +60,7 @@ def generate_launch_description():
                     'launch', 'gazebo.launch.py']
             )]
         ),
-        launch_arguments={'verbose': 'true', 'world': simulation_world}.items(),
+        launch_arguments={'verbose': 'true'}.items(),
     )
 
     spawn_entity = Node(
