@@ -105,7 +105,7 @@ controller_interface::InterfaceConfiguration ScaraJointVelocityController::state
 }
 ```
 ## Activating the Controller
-The `on_activate` is called once when the controller is activated. This method should handle controller restarts, such as setting the resetting reference to safe values. It should also perform controller specific safety checks. The `command_interface_configuration` and `command_interface_configuration` are also called again when the controller is activated.
+The `on_activate` is called once when the controller is activated. This method should handle controller restarts, such as setting the resetting reference to safe values. It should also perform controller specific safety checks. The `command_interface_configuration` and `state_interface_configuration` are also called again when the controller is activated.
 
 In this tutorial, this method is used to order the command interfaces to fit the joint name order of the controller `joints` parameter. This is done by defining:   
 ```c++

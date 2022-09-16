@@ -171,12 +171,62 @@ Type: std_msgs/msg/Float64MultiArray
 Publisher count: 0
 Subscription count: 1
 ```
-This shows you that the expected command message format is of type `Float64MultiArray`. Let's now publish a set of position commands on that topic: 
+This shows you that the expected command message format is of type `Float64MultiArray`. Let's check how this message type is defined by running :
+``` shell
+$ ros2 interface show std_msgs/msg/Float64MultiArray
+```
+which will return :
+```shell
+# Please look at the MultiArrayLayout message definition for
+# documentation on all multiarrays.
+
+MultiArrayLayout  layout        # specification of data layout
+float64[]         data          # array of data
+```
+The expected message is an array of `float64`. Let's now publish a set of position commands on that topic: 
 ```shell
 ros2 topic pub --once /scara_position_controller/commands std_msgs/msg/Float64MultiArray "{data: [0.5,-1.5,0.3]}"
 ```
 Your robot moved to the desired position! 
-Notice here that the motion to the desired position was done in one shot, what on a real robot would require excessive torques. In the case of a real robot, it would be more suited to use another controller that is able of interpolating the robot motion such as the [`joint_trajectory_controller`](https://control.ros.org/master/doc/ros2_controllers/joint_trajectory_controller/doc/userdoc.html). To practice your ros2_control skills try configuring and running this controller with the scara robot.    
+Notice here that the motion to the desired position was done in one shot, what on a real robot would require excessive torques. In the case of a real robot, it would be more suited to use another controller that is able of interpolating the robot motion such as the [`joint_trajectory_controller`](https://control.ros.org/master/doc/ros2_controllers/joint_trajectory_controller/doc/userdoc.html). After adding the new controller to the configuration [file](../scara_description/config/scara_controllers.yaml) as the `scara_trajectory_controller`, let's see how to switch from one controller to the other. We consider that the application was not stopped and that the `scara_position_controller` is still running.
+
+At first, the new controller needs to be loaded. If we run the previous command:
+```shell
+$ ros2 control load_controller scara_trajectory_controller --set-state active
+```
+it will return:
+```shell
+[ERROR] [1663347965.049772820] [controller_manager]: Resource conflict for controller 'scara_trajectory_controller'. Command interface 'joint1/position' is already claimed.
+```
+As explained in the [overview section](r2c_overview.md), the command interfaces are exclusively accessed to avoid this particular case where two controllers claim the same interface. To deal with it, the `scara_position_controller` needs to release the interface before the `scara_trajectory_controller` can claim it. One way of doing it is to first deactivate the `scara_position_controller` by running:
+```shell
+$ ros2 control set_controller_state scara_position_controller inactive 
+```
+and then activate the other controller by running:
+```shell
+$ ros2 control set_controller_state scara_trajectory_controller active 
+```
+As a result, the controllers are switched what can be checked running once again:
+``` shell
+$ ros2 control list_controllers
+```
+that should give you: 
+``` shell
+joint_state_broadcaster[joint_state_broadcaster/JointStateBroadcaster] active    
+scara_position_controller[position_controllers/JointGroupPositionController] inactive 
+scara_trajectory_controller[joint_trajectory_controller/JointTrajectoryController] active
+```
+
+Alternatively, in order to avoid the period where teh hardware is not controlled, both actions can be done simultaneously by running: 
+```shell
+$ ros2 control switch_controllers --deactivate scara_position_controller --activate scara_trajectory_controller
+```
+
+Notice that in order to be able to activate the `scara_trajectory_controller`, its state needs to be `inactive` meaning that is was already configured. In order to configure the controller without activating it, you can run: 
+```shell
+ros2 control load_controller scara_trajectory_controller --set-state configured
+```
+
 
 ## Additional comments on controllers
 In ros2_control, controllers can be loaded, unloaded and switched on runtime without stopping the hardware. This allows to address the need of applications that have multiple different operating phases. More information can be found [here](https://control.ros.org/master/index.html).
