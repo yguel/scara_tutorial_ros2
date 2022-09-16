@@ -4,9 +4,9 @@
     <ros2_control name="scara" type="system">
 
         <hardware>
-            <!-- <plugin>mock_components/GenericSystem</plugin> -->
+            <plugin>mock_components/GenericSystem</plugin>
             <!-- <plugin>scara_hardware/ScaraRobot</plugin> -->
-            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+            <!-- <plugin>gazebo_ros2_control/GazeboSystem</plugin> -->
         </hardware>
 
         <joint name="joint1">
