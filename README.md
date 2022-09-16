@@ -1,4 +1,5 @@
 # Scara tutorial ROS2
+The [ros2_control](https://control.ros.org) is a realtime control framework designed for general robotics applications. It is an abstraction layer for simple integration of hardware and controllers. The ros2_control framework comes with standard interfaces to enhance code modularity and robot agnostic design. Application specific details, such as the controller to be used or the robot description, are easily specified via configuration files. Finally, the ros2_control framework can easily be deployed via ROS2 launch a file.
 
 This tutorial is made to understand the basic concepts of controlling a robot using ros2_control. In particular, it describes how to :
 - [Write a URDF description of a simple SCARA manipulator](resources/urdf_tutorial.md)

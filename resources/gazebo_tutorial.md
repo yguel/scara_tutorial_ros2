@@ -1,9 +1,9 @@
-## Setting up the SCARA manipulator to run with ros2_control and Gazebo 
+# Setting up the SCARA manipulator to run with ros2_control and Gazebo 
 Whereas using simulated hardware is very important to test the kinematic properties of the robot, in many application the use of robot dynamics and interactions with the environment is required. The [Gazebo](https://gazebosim.org/home) simulator is often used in ROS2 projects as it easy to combine ROS2 with Gazebo. Also, ros2_control has specific Hardware Interfaces that allow to simulate a hardware inside Gazebo while using controllers in the ros2_control framework. 
 
 In this section of the tutorial, we will focus on how to simulate the SCARA robot in Gazebo with ros2_control and how to interact with it. 
 
-### Adding the Gazebo description to the URDF
+## Adding the Gazebo description to the URDF
 In order to use ros2_control with Gazebo, some additional setup steps are required in the robot description. In fact, Gazebo allows to implement Gazebo plugins to interact with the simulation, what is used to create a bridge between Gazebo and ros2_control. The `gazebo_ros2_control` plugin is used for this reason. In contrary to the previous steps where the Controller Manager was acting as a standalone ROS2 node, in this case the `gazebo_ros2_control` plugin is responsible of running an instance of the Controller Manager inside the Gazebo node.   
 
 This can be done by adding a [`scara.gazebo.xacro`](../scara_description/gazebo/scara.gazebo.xacro) configuration file in the `scara_description` package, that contains:
@@ -40,7 +40,7 @@ This description file can then be added to the [`scara.config.xacro`](../scara_d
 <xacro:include filename="$(find scara_description)/gazebo/scara.gazebo.xacro"/>
 ```
 
-### Adding the Gazebo ros2_control Hardware Interface
+## Adding the Gazebo ros2_control Hardware Interface
 Now that the ros2_control plugin was added to the description, we also need to specify the ros2_control Hardware Interface that needs to be used to link the Gazebo hardware with ros2_control. To do so we just need to specify the `GazeboSystem` hardware interface plugin in the ros2_control urdf description [file](../scara_description/ros2_control/scara.ros2_control.urdf) as follows:
 ```xml
 <?xml version="1.0"?>
@@ -53,7 +53,7 @@ Now that the ros2_control plugin was added to the description, we also need to s
     </ros2_control>
 </robot>
 ```
-### Launching Gazebo with ros2_control
+## Launching Gazebo with ros2_control
 Once the description is complete, we need to modify the launch file so that it can launch Gazebo and spawn the robot from the URDF description. 
 
 The Gazebo node has its own launch file that can be included in our launch file as follows: 

@@ -1,9 +1,9 @@
-## Writing the URDF description of the SCARA robot
+# Writing the URDF description of the SCARA robot
 The URDF file is a standard XML based file used to describe characteristic of a robot. It can represent any robot with a tree structure, except those with cycles. Each link must have only one parent. For ros2_control, there are three primary tags: `link`, `joint`, and `ros2_control`. The `joint` tag define the robot's kinematic structure, while the `link` tag defines the dynamic properties and 3D geometry. The `ros2_control` defines the hardware and controller configuration.
 
 A good practice in ROS2 is to specify the description of the used robot in a dedicated package. In this tutorial, the package is named in a standard way `scara_description`. In this package you can find different folders containing the configuration of the used system for different ROS2 components. 
 
-### Global URDF description using Xacro
+## Global URDF description using Xacro
 In order to simplify the setup of the robot we often build the robot URDF description using `xacro`. Xacro (XML Macros) is an XML macro language. With xacro, you can construct shorter and more readable XML files by using macros that expand to larger XML expressions. Using xacro allows to include smaller segments of the system description for better readability. For example, in the case of the scara robot, the global URDF is defined using the [scara.config.xacro](../scara_description/config/scara.config.xacro) file, formatted as follows: 
 ```xml 
 <?xml version="1.0"?>
@@ -27,7 +27,7 @@ In this xml description:
 
 In the next sections, let's focus more in details on the included description files. 
 
-### Geometry and Dynamics
+## Geometry and Dynamics
 
 In this section, let's focus on the [`scara.urdf`](../scara_description/urdf/scara.urdf) description file. The URDF file describes in details the geometry of the robot as well as some additional parameters such as its visual and collision meshes, dynamics and others. 
 
@@ -118,7 +118,7 @@ In this xml description:
 * The `limits` tag specifies kinematic and dynamic limits for the joint.
 * The `dynamics` tag specifies some dynamics properties of the joint such as its damping or friction coefficients.
 
-## Hardware setup for ros2_control
+## Hardware Interface setup for ros2_control
 
 In this section, let's focus on the [`scara.ros2_control.urdf`](../scara_description/ros2_control/scara.ros2_control.urdf) description file. This description file is used to set up the ros2_control hardware that will be used to specify the `command_interface` and `state_interface` for each `joint`, `sensor` and/or `gpio`. 
 
@@ -158,3 +158,5 @@ In this xml description:
 * The`joint` tag specifies the state and command interfaces that the loaded plugin is will offer. The joint is specified with the name attribute. The `command_interface` and `state_interface` tags specify the interface type, usually position, velocity, acceleration, or effort. Additionally, for each interface additional parameters such as `min`, `max` and `initial_value` can be set.  
 
 The hardware interface that can be loaded here as a plugin is dependant of the type of robot that is controlled and its control mode. It is an interface between ros2_control and the robot driver. For robots that support ros2_control, the interface is often given either by the manufacturer or the community. A non exhaustive list of available hardware interfaces can be found [here](https://control.ros.org/master/doc/supported_robots/supported_robots.html). 
+
+At this point you can either go further to the next [section](launch_tutorial.md) on how to launch and interact with the current system. In the case where the hardware interface that you want to use is not already available, you can go to the [section](hardware_tutorial.md) about how to develop a custom one. 

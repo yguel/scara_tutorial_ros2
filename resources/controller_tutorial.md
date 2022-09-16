@@ -1,4 +1,4 @@
-## Writing of a Controller
+# Writing of a Controller
 
 In ros2_control, controllers are implemented as plugins that conforms to the `ControllerInterface` public interface. Unlike hardware interfaces, controllers are [managed node](https://design.ros2.org/articles/node_lifecycle.html), which means that they work as state-machines and thus have a finite set of states, which are:
 
@@ -38,7 +38,7 @@ class ScaraJointVelocityController : public controller_interface::ControllerInte
 // ...
 }
 ```
-### Initializing the Controller
+## Initializing the Controller
 The `on_init` method is called immediately after the controller plugin is dynamically loaded. The method is called only once during the lifetime for the controller, hence memory that exists for the lifetime of the controller should be allocated. Additionally, the parameter values for `joints`, `command_interfaces` and `state_interfaces` should be declared and accessed. Those parameter values are required for the next two methods. 
 
 In this tutorial, in the `on_init` method the `joints` parameter is declared as follows:
@@ -53,7 +53,7 @@ CallbackReturn ScaraJointVelocityController::on_init(){
 ```
 This parameter allows to specify the joints that will be controlled with this controller.
 
-### Configuring the Controller
+## Configuring the Controller
 The `on_configure` method is called immediately after the controller is set to the inactive state. This state occurs when the controller is started for the first time, but also when it is restarted. Reconfigurable parameters should be read in this method. Additionally, publishers and subscribers should be created.
 
 In this tutorial, in this method the names of the controlled joints are queried and the subscription to the `~/joint_velocity` topic is made as follows:
@@ -104,7 +104,7 @@ controller_interface::InterfaceConfiguration ScaraJointVelocityController::state
     return conf;
 }
 ```
-### Activating the Controller
+## Activating the Controller
 The `on_activate` is called once when the controller is activated. This method should handle controller restarts, such as setting the resetting reference to safe values. It should also perform controller specific safety checks. The `command_interface_configuration` and `command_interface_configuration` are also called again when the controller is activated.
 
 In this tutorial, this method is used to order the command interfaces to fit the joint name order of the controller `joints` parameter. This is done by defining:   
@@ -121,7 +121,7 @@ CallbackReturn ScaraJointVelocityController::on_activate(const rclcpp_lifecycle:
 }
 ```
 
-### Running the COntroller
+## Running the Controller
 
 The `update` method is part of the main control loop. Since the method is part of the realtime control loop, the realtime constraint must be enforced. The controller should read from the state interfaces, the reference and compute the command. Normally, the reference is access via a ROS2 subscriber. Since the subscriber runs on the non-realtime thread, a realtime buffer is used to a transfer the message to the realtime thread. The realtime buffer is eventually a pointer to a ROS message with a mutex that guarantees thread safety and that the realtime thread is never blocked. The calculated control command should then be written to the command interface, which will be passed to the hardware.
 
@@ -155,7 +155,7 @@ controller_interface::return_type ScaraJointVelocityController::update(const rcl
 ```
 In this method, at first the data is queried from the subscriber using the `rt_command_ptr_` object. Then we check if a new command was received. Next, the controller iterates over all commanded joints and computes the commanded position to be applied and finally updates the `command_interfaces_` with the new position that needs to be passed to the hardware. 
 
-### Additional methods
+## Additional methods
  The `on_deactivate` is called when a controller stops running. It is important to release the claimed command interface in this method, so other controllers can use them if needed. This is down with the `release_interfaces` function.
 
  In our case, to keep things simple this method is empty:

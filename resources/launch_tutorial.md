@@ -1,7 +1,7 @@
-## Launching and interacting with the Scara robot
+# Launching and interacting with the Scara robot
 In ros2_control, there is one main node responsible for running the framework, which is the `ControllerManager`. In this section, we will focus on how to set up and run this node and how to interact with it. 
 
-### Configuring the Controller Manager
+## Configuring the Controller Manager
 The `ControllerManager` node requires in addition to the robot description a configuration file with additional parameters, such as the control loop update rate, as well as a list of the desired controllers and their parameters. Such a configuration file is usually formatted as follows:  
 ```yaml
 controller_manager:
@@ -46,7 +46,7 @@ For more information about available controllers and their usage refer to the [`
 
 Now that we have the robot URDF description and the configuration for the Controller Manager node, let's create a launch file to run the scara robot. 
 
-### Creating a launch file
+## Creating a launch file
 
 In the [`scara.launch.py`](../scara_bringup/launch/scara.launch.py) file, we first need to load the robot description from URDF. As we use XACRO, the global description file [`scara.config.xacro`](../scara_description/config/scara.config.xacro) of the robot needs to be evaluated first, what can be achieved as follows:
 ```python
@@ -84,7 +84,7 @@ For the purpose of this tutorial you will also need to launch an `rviz2` node as
 
 See [here](../scara_bringup/launch/scara.launch.py) for the complete launch file used for this tutorial. 
 
-### Running and interacting with the scara robot
+## Running and interacting with the scara robot
 
 After building your workspace, you can run the launch file using:
 ```shell
@@ -95,7 +95,7 @@ A RViz2 window should open and display the following:
 
 This output indicates that the `robot_state_publisher` node does not have any information about the robot current state. This is not an error in the configuration of your robot and is due to the fact that by default, the `controller_manager` node does not load any controllers, including the `joint_state_broadcaster` responsible for sharing the state data with the ROS2 environment. 
 
-The ros2_control framework comes with some command line functionalities that allow you to interact with Controller Manager. For example, to see what are the hardware interfaces that are currently running, run in a new terminal: 
+The ros2_control framework comes with some [command line functionalities](https://control.ros.org/master/doc/ros2_control/ros2controlcli/doc/userdoc.html) that allow you to interact with Controller Manager. For example, to see what are the hardware interfaces that are currently running, run in a new terminal: 
 ```shell
 $ ros2 control list_hardware_interfaces
 ```
@@ -142,7 +142,7 @@ $ ros2 topic echo /joint_states
 ```
 Even though the `joint_state_broadcaster` is a controller, it does not command any interface of the robot. In the next section, let's focus on running another controller that this time will move the robot. 
 
-### Controlling joints with controllers
+## Controlling joints with controllers
 
 Let's now focus on another controller that was set up in the [`scara_controllers.yaml`](../scara_description/config/scara_controllers.yaml) configuration file. In order to give position commands to the scara robot, load the `scara_position_controller` by running:  
 ```shell
@@ -176,10 +176,10 @@ This shows you that the expected command message format is of type `Float64Multi
 ros2 topic pub --once /scara_position_controller/commands std_msgs/msg/Float64MultiArray "{data: [0.5,-1.5,0.3]}"
 ```
 Your robot moved to the desired position! 
-Notice here that the motion to the desired position was done in one shot, what on a real robot would require excessive torques. In the case of a real robot, it would be more suited to use another controller that is able of interpolating the robot motion such as the `joint_trajectory_controller`. To practice your ros2_control skills try configuring and running this controller with the scara robot.    
+Notice here that the motion to the desired position was done in one shot, what on a real robot would require excessive torques. In the case of a real robot, it would be more suited to use another controller that is able of interpolating the robot motion such as the [`joint_trajectory_controller`](https://control.ros.org/master/doc/ros2_controllers/joint_trajectory_controller/doc/userdoc.html). To practice your ros2_control skills try configuring and running this controller with the scara robot.    
 
-### Additional comments on controllers
-In ros2_control, controllers can be loaded, unloaded and switched on runtime without stopping the hardware? This allows you to address the need of applications that have multiple different operating phases. More information can be found [here](https://control.ros.org/master/index.html).
+## Additional comments on controllers
+In ros2_control, controllers can be loaded, unloaded and switched on runtime without stopping the hardware. This allows to address the need of applications that have multiple different operating phases. More information can be found [here](https://control.ros.org/master/index.html).
 
 Also, in most applications the controller to be loaded is known from start and therefore it can be loaded directly at startup in the [launch](../scara_bringup/launch/scara.launch.py) file by calling the `spawner` node:
 ```python
@@ -189,3 +189,5 @@ controller_spawner = Node(
         arguments=['<controller_name>'],
     )
 ```
+
+Some additional information about available controllers can be found [here](https://control.ros.org/master/doc/ros2_controllers/doc/controllers_index.html). If, however, for the purpose of your applications you need a custom controller, you can go to the [section](controller_tutorial.md) about how to develop one. 

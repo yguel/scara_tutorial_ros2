@@ -1,4 +1,4 @@
-## Writing of a Hardware Interface
+# Writing of a Hardware Interface
 
 In the case if the hardware interface is not available or not suited for the desired application, it can be developed in a custom way, what is the topic of the next section.
 
@@ -31,7 +31,7 @@ class HARDWARE_INTERFACE_PUBLIC ScaraRobot : public hardware_interface::SystemIn
 }
 ```
 
-### Initializing the hardware
+## Initializing the hardware
 Let's first have a look at the initialization `on_init` method. The `on_init` method is called once during ros2_control initialization if the `ScaraRobot` was specified in the URDF. This method should:
 - Check the validity of the requested `command_interfaces` and `state_interfaces` w.r.t. the loaded driver
 - Instantiate the communication with the robot hardware
@@ -207,3 +207,5 @@ To do so you just need to specify your hardware plugin in the ros2_control urdf 
     </ros2_control>
 </robot>
 ```
+
+Now you can test your hardware as explained in the previous [section](launch_tutorial.md), or got further and see the [section](controller_tutorial.md) on how to develop a custom controller.
