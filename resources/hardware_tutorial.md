@@ -208,4 +208,4 @@ To do so you just need to specify your hardware plugin in the ros2_control urdf 
 </robot>
 ```
 
-Now you can test your hardware as explained in the previous [section](launch_tutorial.md), or got further and see the [section](controller_tutorial.md) on how to develop a custom controller.
+Now you can test your hardware as explained in the previous [section on launching and interacting with the hardware](launch_tutorial.md), or got further and see the [section on how to develop a custom controller](controller_tutorial.md).

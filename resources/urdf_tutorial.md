@@ -31,7 +31,11 @@ In the next sections, let's focus more in details on the included description fi
 
 In this section, let's focus on the [`scara.urdf`](../scara_description/urdf/scara.urdf) description file. The URDF file describes in details the geometry of the robot as well as some additional parameters such as its visual and collision meshes, dynamics and others. 
 
-The URDF description file is generally formatted as follows: 
+Let's create a robot description for a scara robot with the following structure:
+
+![scara_tf](scara_tf.png)
+
+The resulting URDF description file is generally formatted as follows: 
 
 ``` xml
 <?xml version = "1.0"?>
@@ -155,8 +159,8 @@ The ros2_control description is generally formatted as follows:
 In this xml description:
 * The `robot` tag encloses all contents of the URDF file. It has a name attribute which must be specified.
 * The `hardware` and `plugin` tags instruct the ros2_control framework to dynamically load a hardware driver conforming to `HardwareInterface` as a plugin. The plugin is specified as `{Name_Space}/{Class_Name}`. In this case we use the `GenericSystem` hardware which is a general purpose simulation hardware available in the [`ros2_control`](https://github.com/ros-controls/ros2_control) package. 
-* The`joint` tag specifies the state and command interfaces that the loaded plugin is will offer. The joint is specified with the name attribute. The `command_interface` and `state_interface` tags specify the interface type, usually position, velocity, acceleration, or effort. Additionally, for each interface additional parameters such as `min`, `max` and `initial_value` can be set.  
+* The`joint` tag specifies the state and command interfaces that the loaded plugin will offer. The joint is specified with the name attribute. The `command_interface` and `state_interface` tags specify the interface type, usually position, velocity, acceleration, or effort. Additionally, for each interface additional parameters such as `min`, `max` and `initial_value` can be set.  
 
 The hardware interface that can be loaded here as a plugin is dependant of the type of robot that is controlled and its control mode. It is an interface between ros2_control and the robot driver. For robots that support ros2_control, the interface is often given either by the manufacturer or the community. A non exhaustive list of available hardware interfaces can be found [here](https://control.ros.org/master/doc/supported_robots/supported_robots.html). 
 
-At this point you can either go further to the next [section](launch_tutorial.md) on how to launch and interact with the current system. In the case where the hardware interface that you want to use is not already available, you can go to the [section](hardware_tutorial.md) about how to develop a custom one. 
+At this point you can either go further to the next [section on how to launch and interact with the current system](launch_tutorial.md). In the case where the hardware interface that you want to use is not already available, you can go to the [section on how to develop a custom one](hardware_tutorial.md). 
