@@ -215,4 +215,13 @@
     <dynamics damping="0.4" friction="5" />
   </joint>
 
+  <link name="tool0"/>
+
+  <joint name="tool02link3" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <parent link="link3"/>
+      <child link="tool0"/>
+      <axis xyz="0 0 0"/>
+  </joint>
+
 </robot>
