@@ -27,7 +27,18 @@ In the control loop execution managed by the Controller Manager, the Resource Ma
 
 ## Controllers
 
-The controllers in the ros2_control framework have the same functionality as defined in the control theory. They compare the reference value with the measured output and, based on this error, calculate a system’s input. The controllers are loaded as plugins making their development independent of the framework. 
+The controllers in the ros2_control framework have the same functionality as defined in the control theory. They compare the reference value with the measured output and, based on this error, calculate a system’s input. The controllers are loaded as plugins making their development independent of the framework. In ros2_control, controllers are [managed node](https://design.ros2.org/articles/node_lifecycle.html), which means that they work as state-machines and thus have a finite set of states, which are:
+
+1. Unconfigured
+2. Inactive
+3. Active
+4. Finalized
+
+This configuration has several advantages:
+- It allows to have greater control over the current state of the controller and ensure that it has been correctly instantiated before being executed. 
+- It allows to load, restart and replace controllers on-line. 
+
+Notice here also, that in order to be executed by the Controller Manager and command the hardware, the controller needs to be in `active` state. 
 
 When executing the control-loop, the Controller Manager calls the `update()` method of all controllers. This method can access the latest hardware states and enable the controller to send commands to the hardware interfaces.
 

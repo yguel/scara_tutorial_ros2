@@ -240,4 +240,4 @@ controller_spawner = Node(
     )
 ```
 
-Some additional information about available controllers can be found [here](https://control.ros.org/master/doc/ros2_controllers/doc/controllers_index.html). If, however, for the purpose of your applications you need a custom controller, you can go to the [section](controller_tutorial.md) about how to develop one. 
+Some additional information about available controllers can be found [here](https://control.ros.org/master/doc/ros2_controllers/doc/controllers_index.html). If, however, for the purpose of your applications you need a custom controller, you can go to the [section on how to develop one](controller_tutorial.md). 

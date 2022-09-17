@@ -20,6 +20,7 @@ The controller plugin for the tutorial robot is called `ScaraJointVelocityContro
 7. `on_cleanup`
 8. `on_error`
 9. `on_shutdown`
+
 These methods are defined in the [scara_joint_velocity_controller.hpp](../scara_controllers/scara_joint_velocity_controller/include/scara_joint_velocity_controller/scara_joint_velocity_controller.hpp) header file as follows:
 ```c++
 class ScaraJointVelocityController : public controller_interface::ControllerInterface {
