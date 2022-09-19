@@ -47,14 +47,10 @@ public:
   std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
 
   SCARA_HARDWARE_PUBLIC
-  hardware_interface::return_type read(
-    const rclcpp::Time & time,
-    const rclcpp::Duration & period) override;
+  hardware_interface::return_type read() override;
 
   SCARA_HARDWARE_PUBLIC
-  hardware_interface::return_type write(
-    const rclcpp::Time & time,
-    const rclcpp::Duration & period) override;
+  hardware_interface::return_type write() override;
 
 private:
   std::vector<double> hw_commands_position_;

@@ -24,8 +24,8 @@ class HARDWARE_INTERFACE_PUBLIC ScaraRobot : public hardware_interface::SystemIn
     CallbackReturn on_init(const hardware_interface::HardwareInfo &info) override;
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
-    return_type read(const rclcpp::Time &time, const rclcpp::Duration &period) override;
-    return_type write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/) override;
+    return_type read() override;
+    return_type write() override;
     // private members
     // ...
 }
@@ -99,10 +99,10 @@ Now that the Hardware Interface is initialized, connected to the robot and that 
 In ros2_control the main control loop consists in successive calls of the hardware `read` method, followed by the controller `update` method, followed by the hardware `write` method. In the read phase of the main loop, ros2_control loops over all hardware components that where loaded to call their `read` method. It is executed on the realtime thread, hence the method must obey by realtime constraints. The `read` method is responsible for accessing the robot current state and updating the data values of the `state_interfaces`. 
 In this tutorial, as we only want to simulate the robot, we compute its current velocity as follows:  
 ```c++
-hardware_interface::return_type ScaraRobot::read(const rclcpp::Time & time, const rclcpp::Duration &period) {
+hardware_interface::return_type ScaraRobot::read() {
     // read hardware values for state interfaces, e.g joint encoders and sensor readings
     for (uint i = 0; i < info_.joints.size(); i++) {
-        hw_states_velocity_[i] = (hw_states_position_[i] - hw_states_previous_position_[i])/(period.nanoseconds()*1e-9);
+        hw_states_velocity_[i] = (hw_states_position_[i] - hw_states_previous_position_[i])/(100); // hardcoded 100Hz !! back porting from humble
 
         hw_states_previous_position_[i] = hw_states_position_[i];
     }
@@ -112,7 +112,7 @@ hardware_interface::return_type ScaraRobot::read(const rclcpp::Time & time, cons
 In the same way, during the write phase of the main loop, the `write` method of all loaded hardware components is called after the controller `update` in the realtime loop. For this reason, the `write` method must also obey by realtime constraints. The `write` method is responsible for updating the data values of the `command_interfaces`. 
 In the case of our scara robot, the methods is defined as follows:
 ```c++
-hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) {
+hardware_interface::return_type write() {
     // send command interface values to hardware, e.g joint set joint velocity
     bool isNan = false;
     for (auto i = 0ul; i < hw_commands_position_.size(); i++) {

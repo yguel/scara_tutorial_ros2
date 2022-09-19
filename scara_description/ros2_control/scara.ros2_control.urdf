@@ -4,7 +4,7 @@
     <ros2_control name="scara" type="system">
 
         <hardware>
-            <plugin>mock_components/GenericSystem</plugin>
+            <plugin>fake_components/GenericSystem</plugin>
             <!-- <plugin>scara_hardware/ScaraRobot</plugin> -->
             <!-- <plugin>gazebo_ros2_control/GazeboSystem</plugin> -->
         </hardware>

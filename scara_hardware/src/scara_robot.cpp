@@ -76,9 +76,9 @@ CallbackReturn ScaraRobot::on_init(
 
   // initialize states
   for (uint i = 0; i < info_.joints.size(); i++) {
-    hw_states_position_[i] = std::stod(info_.joints[i].state_interfaces[0].initial_value);
-    hw_states_previous_position_[i] = std::stod(info_.joints[i].state_interfaces[0].initial_value);
-    hw_states_velocity_[i] = std::stod(info_.joints[i].state_interfaces[1].initial_value);
+    hw_states_position_[i] = 0;
+    hw_states_previous_position_[i] = 0;
+    hw_states_velocity_[i] = 0;
   }
   return CallbackReturn::SUCCESS;
 }
@@ -116,12 +116,10 @@ ScaraRobot::export_command_interfaces()
   return command_interfaces;
 }
 // ------------------------------------------------------------------------------------------
-hardware_interface::return_type ScaraRobot::read(
-  const rclcpp::Time & /*time*/,
-  const rclcpp::Duration & period)
+hardware_interface::return_type ScaraRobot::read()
 {
   for (uint i = 0; i < info_.joints.size(); i++) {
-    hw_states_velocity_[i] = (hw_states_position_[i] - hw_states_previous_position_[i])/(period.nanoseconds()*1e-9);
+    hw_states_velocity_[i] = (hw_states_position_[i] - hw_states_previous_position_[i])/(100);
 
     hw_states_previous_position_[i] = hw_states_position_[i];
   }
@@ -129,9 +127,7 @@ hardware_interface::return_type ScaraRobot::read(
   return hardware_interface::return_type::OK;
 }
 // ------------------------------------------------------------------------------------------
-hardware_interface::return_type ScaraRobot::write(
-  const rclcpp::Time & /*time*/,
-  const rclcpp::Duration & /*period*/)
+hardware_interface::return_type ScaraRobot::write()
 {
   // write hw_commands_position_ 
   bool isNan = false;
