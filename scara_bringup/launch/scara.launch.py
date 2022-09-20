@@ -73,8 +73,22 @@ def generate_launch_description():
     robot_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['scara_position_controller'],
+        arguments=['scara_joint_velocity_controller'],
     )
+
+    slider_config = PathJoinSubstitution(
+        [
+            FindPackageShare('scara_bringup'),
+            'config',
+            'scara_vel_sp_config.yaml',
+        ]
+    )
+
+    slider_node = Node(
+        package='slider_publisher', 
+        executable='slider_publisher', 
+        name='slider_publisher',
+        arguments = [slider_config])
 
     nodes = [
         rviz_node,
@@ -82,6 +96,7 @@ def generate_launch_description():
         robot_state_pub_node,
         # joint_state_broadcaster_spawner,
         # robot_controller_spawner,
+        # slider_node,
     ]
 
     return LaunchDescription(nodes)
