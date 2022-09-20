@@ -30,7 +30,7 @@ This tutorial is made to understand the basic concepts of controlling a robot us
 4. Pull relevant packages, install dependencies, compile, and source the workspace by using:
     ```shell
     cd ~/ros2_ws
-    git clone https://github.com/mcbed/scara_tutorial_ros2.git src/scara_tutorial_ros2
+    git clone https://github.com/ICube-Robotics/scara_tutorial_ros2.git src/scara_tutorial_ros2
     rosdep install --ignore-src --from-paths . -y -r
     colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install
     source install/setup.bash
