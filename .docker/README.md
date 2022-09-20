@@ -4,8 +4,8 @@ Provides a basic preconfigured docker container for tutorial purposes.
 To use it, make sure you have [Docker](https://docs.docker.com/get-docker/) installed, then build and run the image :
 
 ```shell
-$ docker build --tag scara_tutorial_ros2:humble --file .docker/remote/Dockerfile .
-$ docker run scara_tutorial_ros2:humble ros2 launch scara_bringup scara.launch.py
+$ docker build --tag scara_tutorial_ros2:humble --file .docker/Dockerfile .
+$ docker run --rm -p 6080:6080 -it scara_tutorial_ros2:humble
 ```
 
 ### Run with GUI
