@@ -1,0 +1,66 @@
+Scara tutorial ROS2
+===================
+
+The `ros2_control <https://control.ros.org>`__ framework is a realtime
+control framework designed for general robotics applications that gains
+more and more attention both for research and industrial purposes. An
+overview of the ros2_control framework can be found
+`here <resources/r2c_overview.md>`__.
+
+This tutorial is made to understand the basic concepts of controlling a
+robot using ros2_control. In particular, it describes how to : - `Write
+a URDF description of a simple SCARA
+manipulator <resources/urdf_tutorial.md>`__ - `Launch and interact with
+the SCARA robot <resources/launch_tutorial.md>`__ - `Write a custom
+hardware interface for the SCARA
+robot <resources/hardware_tutorial.md>`__ - `Write a custom controller
+for the SCARA robot <resources/controller_tutorial.md>`__ - `Set up the
+SCARA manipulator to run with ros2_control and
+Gazebo <resources/gazebo_tutorial.md>`__
+
+.. figure:: ../resources/scara_model.png
+   :alt: scara model
+
+   scara model
+
+Getting Started
+---------------
+
+**Required setup : Ubuntu 22.04 LTS and ROS2 Humble**
+
+1. Install ``ros2`` packages. The current development is based of
+   ``ros2 humble``. Installation steps are described
+   `here <https://docs.ros.org/en/humble/Installation.html>`__.
+2. Source your ``ros2`` environment:
+   ``shell     source /opt/ros/humble/setup.bash`` **NOTE**: The ros2
+   environment needs to be sources in every used terminal. If only one
+   distribution of ros2 is used, it can be added to the ``~/.bashrc``
+   file.
+3. Install ``colcon`` and its extensions :
+   ``shell     sudo apt install python3-colcon-common-extensions``
+4. Create a new ros2 workspace: ``shell     mkdir ~/ros2_ws/src``
+5. Pull relevant packages, install dependencies, compile, and source the
+   workspace by using:
+   ``shell     cd ~/ros2_ws     git clone https://github.com/ICube-Robotics/scara_tutorial_ros2.git src/scara_tutorial_ros2     rosdep install --ignore-src --from-paths . -y -r     colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install     source install/setup.bash``
+
+Acknowledgments
+---------------
+
+This tutorial is partially inspired from
+`pac48 <https://github.com/pac48/ros2_control_demos/tree/full-example-tutorial>`__\ ’s
+tutorial and the official `ros2_control
+website <https://control.ros.org>`__.
+
+Contacts
+--------
+
+.. figure:: https://icube.unistra.fr/fileadmin/templates/DUN/icube/images/logo.png
+   :alt: icube
+
+   icube
+
+`ICube Laboratory <https://icube.unistra.fr>`__, `University of
+Strasbourg <https://www.unistra.fr/>`__, France
+
+**Maciej Bednarczyk:** m.bednarczyk@unistra.fr, @github:
+`mcbed <mailto:macbednarczyk@gmail.com>`__
