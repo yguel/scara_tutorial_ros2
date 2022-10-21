@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Welcome to scara tutorial ROS2’s documentation! &#8212; scara tutorial ROS2  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="welcome-to-scara-tutorial-ros2-s-documentation">
+<h1>Welcome to scara tutorial ROS2’s documentation!<a class="headerlink" href="#welcome-to-scara-tutorial-ros2-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="scara-tutorial-ros2">
+<h1>Scara tutorial ROS2<a class="headerlink" href="#scara-tutorial-ros2" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference external" href="https://control.ros.org">ros2_control</a> framework is a realtime
+control framework designed for general robotics applications that gains
+more and more attention both for research and industrial purposes. An
+overview of the ros2_control framework can be found
+<a class="reference external" href="resources/r2c_overview.md">here</a>.</p>
+<p>This tutorial is made to understand the basic concepts of controlling a
+robot using ros2_control. In particular, it describes how to : - <a class="reference external" href="resources/urdf_tutorial.md">Write
+a URDF description of a simple SCARA
+manipulator</a> - <a class="reference external" href="resources/launch_tutorial.md">Launch and interact with
+the SCARA robot</a> - <a class="reference external" href="resources/hardware_tutorial.md">Write a custom
+hardware interface for the SCARA
+robot</a> - <a class="reference external" href="resources/controller_tutorial.md">Write a custom controller
+for the SCARA robot</a> - <a class="reference external" href="resources/gazebo_tutorial.md">Set up the
+SCARA manipulator to run with ros2_control and
+Gazebo</a></p>
+<figure class="align-default" id="id1">
+<img alt="scara model" src="_images/scara_model.png" />
+<figcaption>
+<p><span class="caption-text">scara model</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p><strong>Required setup : Ubuntu 22.04 LTS and ROS2 Humble</strong></p>
+<ol class="arabic simple">
+<li><p>Install <code class="docutils literal notranslate"><span class="pre">ros2</span></code> packages. The current development is based of
+<code class="docutils literal notranslate"><span class="pre">ros2</span> <span class="pre">humble</span></code>. Installation steps are described
+<a class="reference external" href="https://docs.ros.org/en/humble/Installation.html">here</a>.</p></li>
+<li><p>Source your <code class="docutils literal notranslate"><span class="pre">ros2</span></code> environment:
+<code class="docutils literal notranslate"><span class="pre">shell</span>&#160;&#160;&#160;&#160; <span class="pre">source</span> <span class="pre">/opt/ros/humble/setup.bash</span></code> <strong>NOTE</strong>: The ros2
+environment needs to be sources in every used terminal. If only one
+distribution of ros2 is used, it can be added to the <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code>
+file.</p></li>
+<li><p>Install <code class="docutils literal notranslate"><span class="pre">colcon</span></code> and its extensions :
+<code class="docutils literal notranslate"><span class="pre">shell</span>&#160;&#160;&#160;&#160; <span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">python3-colcon-common-extensions</span></code></p></li>
+<li><p>Create a new ros2 workspace: <code class="docutils literal notranslate"><span class="pre">shell</span>&#160;&#160;&#160;&#160; <span class="pre">mkdir</span> <span class="pre">~/ros2_ws/src</span></code></p></li>
+<li><p>Pull relevant packages, install dependencies, compile, and source the
+workspace by using:
+<code class="docutils literal notranslate"><span class="pre">shell</span>&#160;&#160;&#160;&#160; <span class="pre">cd</span> <span class="pre">~/ros2_ws</span>&#160;&#160;&#160;&#160; <span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/ICube-Robotics/scara_tutorial_ros2.git</span> <span class="pre">src/scara_tutorial_ros2</span>&#160;&#160;&#160;&#160; <span class="pre">rosdep</span> <span class="pre">install</span> <span class="pre">--ignore-src</span> <span class="pre">--from-paths</span> <span class="pre">.</span> <span class="pre">-y</span> <span class="pre">-r</span>&#160;&#160;&#160;&#160; <span class="pre">colcon</span> <span class="pre">build</span> <span class="pre">--cmake-args</span> <span class="pre">-DCMAKE_BUILD_TYPE=Release</span> <span class="pre">--symlink-install</span>&#160;&#160;&#160;&#160; <span class="pre">source</span> <span class="pre">install/setup.bash</span></code></p></li>
+</ol>
+</section>
+<section id="acknowledgments">
+<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permalink to this headline">¶</a></h2>
+<p>This tutorial is partially inspired from
+<a class="reference external" href="https://github.com/pac48/ros2_control_demos/tree/full-example-tutorial">pac48</a>’s
+tutorial and the official <a class="reference external" href="https://control.ros.org">ros2_control
+website</a>.</p>
+</section>
+<section id="contacts">
+<h2>Contacts<a class="headerlink" href="#contacts" title="Permalink to this headline">¶</a></h2>
+<figure class="align-default" id="id2">
+<img alt="icube" src="https://icube.unistra.fr/fileadmin/templates/DUN/icube/images/logo.png" />
+<figcaption>
+<p><span class="caption-text">icube</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p><a class="reference external" href="https://icube.unistra.fr">ICube Laboratory</a>, <a class="reference external" href="https://www.unistra.fr/">University of
+Strasbourg</a>, France</p>
+<p><strong>Maciej Bednarczyk:</strong> <a class="reference external" href="mailto:m&#46;bednarczyk&#37;&#52;&#48;unistra&#46;fr">m<span>&#46;</span>bednarczyk<span>&#64;</span>unistra<span>&#46;</span>fr</a>, &#64;github:
+<a class="reference external" href="mailto:macbednarczyk&#37;&#52;&#48;gmail&#46;com">mcbed</a></p>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">scara tutorial ROS2</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Maciej Bednarczyk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
