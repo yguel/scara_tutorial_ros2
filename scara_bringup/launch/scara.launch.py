@@ -88,6 +88,7 @@ def generate_launch_description():
         package='slider_publisher', 
         executable='slider_publisher', 
         name='slider_publisher',
+        parameters=[{'rate': 10.0}],
         arguments = [slider_config])
 
     nodes = [
