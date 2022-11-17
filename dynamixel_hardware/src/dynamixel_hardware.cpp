@@ -59,6 +59,14 @@ CallbackReturn DynamixelHardware::on_init(const hardware_interface::HardwareInfo
   joints_.resize(info_.joints.size(), Joint());
   joint_ids_.resize(info_.joints.size(), 0);
 
+  for (uint i = 0; i < info_.transmissions.size(); i++) {
+    for (uint j = 0; j < info_.transmissions[i].joints.size(); j++) {
+      mechanical_reduction_map_.insert(std::pair<std::string, double>(
+          info_.transmissions[i].joints[j].role,
+          info_.transmissions[i].joints[j].mechanical_reduction));
+    }
+  }
+
   for (uint i = 0; i < info_.joints.size(); i++) {
     joint_ids_[i] = std::stoi(info_.joints[i].parameters.at("id"));
     joints_[i].state.position = std::numeric_limits<double>::quiet_NaN();
@@ -285,6 +293,14 @@ return_type DynamixelHardware::read(const rclcpp::Time & /* time */, const rclcp
     joints_[i].state.effort = dynamixel_workbench_.convertValue2Current(currents[i]);
   }
 
+  for (uint i = 0; i < joints_.size(); i++) {
+    if(mechanical_reduction_map_.find(info_.joints[i].name) != mechanical_reduction_map_.end()){
+      joints_[i].state.position /= mechanical_reduction_map_[info_.joints[i].name];
+      joints_[i].state.velocity /= mechanical_reduction_map_[info_.joints[i].name];
+      joints_[i].state.effort *= mechanical_reduction_map_[info_.joints[i].name];
+    } 
+  }
+
   return return_type::OK;
 }
 
@@ -300,6 +316,14 @@ return_type DynamixelHardware::write(const rclcpp::Time & /* time */, const rclc
 
   std::vector<uint8_t> ids(info_.joints.size(), 0);
   std::vector<int32_t> commands(info_.joints.size(), 0);
+
+  for (uint i = 0; i < joints_.size(); i++) {
+    if(mechanical_reduction_map_.find(info_.joints[i].name) != mechanical_reduction_map_.end()){
+      joints_[i].command.position *= mechanical_reduction_map_[info_.joints[i].name];
+      joints_[i].command.velocity *= mechanical_reduction_map_[info_.joints[i].name];
+      joints_[i].command.effort /= mechanical_reduction_map_[info_.joints[i].name];
+    } 
+  }
 
   std::copy(joint_ids_.begin(), joint_ids_.end(), ids.begin());
   const char * log = nullptr;
