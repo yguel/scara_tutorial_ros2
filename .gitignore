@@ -2,3 +2,5 @@ log/
 build/
 install/
 .vscode/
+dynamixel-workbench-msgs/
+dynamixel-workbench/

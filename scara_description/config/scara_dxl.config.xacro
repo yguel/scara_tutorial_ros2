@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- Scara manipulator -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="scara">
+
+    <!-- Import scara urdf file -->
+    <xacro:include filename="$(find scara_description)/urdf/scara_dxl.urdf" />
+
+    <!-- Import scara materials file -->
+    <xacro:include filename="$(find scara_description)/config/materials.urdf" />
+
+    <!-- Import scara ros2_control description -->
+    <xacro:include filename="$(find scara_description)/ros2_control/scara_dxl.ros2_control.urdf" />
+
+    <!-- Import all Gazebo-customization elements -->
+    <xacro:include filename="$(find scara_description)/gazebo/scara_dxl.gazebo.xacro"/>
+
+</robot>
