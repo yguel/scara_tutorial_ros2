@@ -4,9 +4,9 @@
     <ros2_control name="scara" type="system">
 
         <hardware>
-            <plugin>mock_components/GenericSystem</plugin>
+            <!-- <plugin>mock_components/GenericSystem</plugin> -->
             <!-- <plugin>scara_hardware/ScaraRobot</plugin> -->
-            <!-- <plugin>gazebo_ros2_control/GazeboSystem</plugin> -->
+            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
         </hardware>
 
         <joint name="joint1">
@@ -17,6 +17,9 @@
                 <param name="max">1.57</param>
             </state_interface>
             <state_interface name="velocity"> 
+                <param name="initial_value">0.0</param> 
+            </state_interface>
+            <state_interface name="effort"> 
                 <param name="initial_value">0.0</param> 
             </state_interface>
         </joint>
@@ -30,9 +33,12 @@
             <state_interface name="velocity"> 
                 <param name="initial_value">0.0</param> 
             </state_interface>
+            <state_interface name="effort"> 
+                <param name="initial_value">0.0</param> 
+            </state_interface>
         </joint>
         <joint name="joint3">
-            <command_interface name="position"/>
+            <command_interface name="effort"/>
             <state_interface name="position">
                 <param name="initial_value">0.0</param>
                 <param name="min">0</param>
@@ -41,7 +47,16 @@
             <state_interface name="velocity"> 
                 <param name="initial_value">0.0</param> 
             </state_interface>
+            <state_interface name="effort"> 
+                <param name="initial_value">0.0</param> 
+            </state_interface>
         </joint>
+        <sensor name="tcp_ft_sensor">
+            <state_interface name="force.x"/>
+            <state_interface name="force.y"/>
+            <state_interface name="force.z"/>
+            <param name="frame_id">tool0</param>
+        </sensor>
     </ros2_control>
 
 </robot>

@@ -10,8 +10,8 @@ scara_joint_velocity_controller/joint_velocity:
         max: 1.0
         to: data[1]
         default: 0.0      
-    joint3: 
-        min: -1.0
-        max: 1.0
-        to: data[2]
-        default: 0.0
+    # joint3: 
+    #     min: -1.0
+    #     max: 1.0
+    #     to: data[2]
+    #     default: 0.0

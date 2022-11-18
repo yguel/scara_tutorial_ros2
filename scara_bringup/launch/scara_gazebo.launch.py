@@ -53,6 +53,11 @@ def generate_launch_description():
         arguments=['-d', rviz_config_file],
     )
 
+    simulation_world = PathJoinSubstitution(
+        [FindPackageShare('scara_description'),
+            'gazebo/worlds', 'table.world']
+    )
+
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [PathJoinSubstitution(
@@ -60,7 +65,7 @@ def generate_launch_description():
                     'launch', 'gazebo.launch.py']
             )]
         ),
-        launch_arguments={'verbose': 'false'}.items(),
+        launch_arguments={'verbose': 'false', 'world': simulation_world}.items(),
     )
 
     spawn_entity = Node(
@@ -80,6 +85,12 @@ def generate_launch_description():
         package='controller_manager',
         executable='spawner',
         arguments=['scara_joint_velocity_controller'],
+    )
+
+    effort_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['effort_controller'],
     )
 
     slider_config = PathJoinSubstitution(
@@ -103,6 +114,7 @@ def generate_launch_description():
         rviz_node,
         joint_state_broadcaster_spawner,
         robot_controller_spawner,
+        effort_controller_spawner,
         slider_node
     ]
 
