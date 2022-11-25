@@ -9,7 +9,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://scara_description/meshes/chain_base_link.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://scara_description/meshes/scaradxl_base.dae" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -17,7 +17,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://scara_description/meshes/chain_base_link.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://scara_description/meshes/scaradxl_base.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -27,7 +27,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://scara_description/meshes/chain_link0.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://scara_description/meshes/scaradxl_link1.dae" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -35,7 +35,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://scara_description/meshes/chain_link0.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://scara_description/meshes/scaradxl_link1.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -44,7 +44,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://scara_description/meshes/chain_link1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://scara_description/meshes/scaradxl_link2.dae" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -52,7 +52,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://scara_description/meshes/chain_link1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://scara_description/meshes/scaradxl_link2.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
@@ -61,7 +61,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://scara_description/meshes/chain_link2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://scara_description/meshes/scaradxl_link3.dae" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="grey"/>
     </visual>
@@ -69,10 +69,27 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://scara_description/meshes/chain_link2.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://scara_description/meshes/scaradxl_link3.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
   </link>
+
+  <link name = "pen">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://scara_description/meshes/scaradxl_pen.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://scara_description/meshes/scaradxl_pen.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>v
 
   <link name="tool0"/>
 
@@ -85,7 +102,7 @@
   <joint name="joint1" type="prismatic">
     <parent link="base_link"/>
     <child link="link1"/>
-    <origin xyz="0.0 0.0 0.020" rpy="0 0 0"/>
+    <origin xyz="0.0 0.0 0.14" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
     <limit velocity="4.8" effort="1" lower="-0.1" upper="0.1" />
   </joint>
@@ -93,21 +110,28 @@
   <joint name="joint2" type="revolute">
     <parent link="link1"/>
     <child link="link2"/>
-    <origin xyz="0.0 0.0743 0.0" rpy="0 0 0.0"/>
+    <origin xyz="0.0743 0.0 0.0" rpy="0 0 0.0"/>
     <axis xyz="0 0 1"/>
     <limit velocity="4.8" effort="1" lower="-0.010" upper="0.019" />
   </joint>
   <joint name="joint3" type="revolute">
     <parent link="link2"/>
     <child link="link3"/>
-    <origin xyz="0.0 0.1 0.0" rpy="0 0 0.0"/>
+    <origin xyz="0.1 0.0 0.0" rpy="0 0 0.0"/>
     <axis xyz="0 0 1"/>
     <limit velocity="4.8" effort="1" lower="-0.010" upper="0.019" />
   </joint>
 
-  <joint name="tool02link3" type="fixed">
-      <origin rpy="0 0 0" xyz="0 0.1 0"/>
+  <joint name="pen2link3" type="fixed">
+      <origin rpy="0 0 0" xyz="0.1 0 0"/>
       <parent link="link3"/>
+      <child link="pen"/>
+      <axis xyz="0 0 0"/>
+  </joint>
+
+  <joint name="tool02pen" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <parent link="pen"/>
       <child link="tool0"/>
       <axis xyz="0 0 0"/>
   </joint>
