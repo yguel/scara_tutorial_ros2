@@ -29,6 +29,7 @@ endif()
 install(
   PROGRAMS
     scripts/trajectory_publisher.py
+    scripts/wrench_filter_node.py
     DESTINATION lib/${PROJECT_NAME}
 )
 
