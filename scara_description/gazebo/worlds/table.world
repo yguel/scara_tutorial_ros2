@@ -25,28 +25,47 @@
 
     <model name="table">
       <static>true</static>
-      <pose>0.8 0 0.1 0 0 0</pose>
+      <pose>0.8 0 0.25 0 0 0</pose>
       <link name="body">
         <collision name="collision">
           <geometry>
-            <box>
+            <!-- <box>
               <size>1 1 0.2</size>
-            </box>
+            </box> -->
+            <mesh>
+              <uri>file:///home/maciej/dev/ros2_dev/ros2_github/scara_tutorial_ros2/scara_description/gazebo/worlds/wave.dae</uri>
+              <scale>0.5 0.1 0.05</scale>
+            </mesh>
           </geometry>
           <surface>
             <contact>
+              <poissons_ratio>0.347</poissons_ratio>
+              <elastic_modulus>8.8e+09</elastic_modulus>
               <ode>
-                <kp>1000000000</kp>
-                <kd>10000</kd>
+                <kp>100000</kp>
+                <kd>1</kd>
+                <max_vel>1.0</max_vel>
+                <min_depth>0.001</min_depth>
               </ode>
             </contact>
+            <friction>
+              <torsional>
+                <coefficient>1.0</coefficient>
+                <use_patch_radius>0</use_patch_radius>
+                <surface_radius>0.05</surface_radius>
+              </torsional>
+            </friction>
           </surface>
         </collision>
         <visual name="visual">
           <geometry>
-            <box>
+            <!-- <box>
               <size>1 1 0.2</size>
-            </box>
+            </box> -->
+            <mesh>
+              <uri>file:///home/maciej/dev/ros2_dev/ros2_github/scara_tutorial_ros2/scara_description/gazebo/worlds/wave.dae</uri>
+              <scale>0.5 0.1 0.05</scale>
+            </mesh>
           </geometry>
         </visual>
       </link>

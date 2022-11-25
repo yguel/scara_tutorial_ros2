@@ -41,14 +41,16 @@
       <material>Gazebo/Blue</material>
     </gazebo>
 
-    <gazebo reference="tool02link3">
+    <gazebo reference="joint3">
       <provideFeedback>true</provideFeedback>
-      </gazebo>
+      <!-- <implicitSpringDamper>true</implicitSpringDamper> -->
+    </gazebo>
+
       <!-- The ft_sensor plugin -->
-      <gazebo>
-      <plugin name="tcp_ft_sensor" filename="libgazebo_ros_ft_sensor.so">
-        <body_name>link3</body_name>
-        <frame_name>world</frame_name>
+    <gazebo>
+      <plugin name="tcp_ft_sensor_plugin" filename="libgazebo_ros_ft_sensor.so">
+        <joint_name>joint3</joint_name>
+        <!-- <frame_name>world</frame_name> -->
       </plugin>
     </gazebo>
 
