@@ -38,6 +38,7 @@ This tutorial is made to understand the basic concepts of controlling a robot us
 
 ## Acknowledgments 
 This tutorial is partially inspired from [pac48](https://github.com/pac48/ros2_control_demos/tree/full-example-tutorial)'s tutorial and the official [ros2_control website](https://control.ros.org).
+
 This tutorial was created by Maciej Bednarczyk.
 
 ## Contacts ##
