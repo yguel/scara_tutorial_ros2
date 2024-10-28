@@ -25,12 +25,12 @@ This tutorial is made to understand the basic concepts of controlling a robot us
      ```
 3. Create a new ros2 workspace:
     ```shell
-    mkdir ~/ros2_ws/src
+    mkdir ~/ros2_ws/src/
     ```
 4. Pull relevant packages, install dependencies, compile, and source the workspace by using:
     ```shell
     cd ~/ros2_ws
-    git clone https://github.com/ICube-Robotics/scara_tutorial_ros2.git src/scara_tutorial_ros2
+    git clone https://github.com/yguel/scara_tutorial_ros2.git src/scara_tutorial_ros2
     rosdep install --ignore-src --from-paths . -y -r
     colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --symlink-install
     source install/setup.bash
@@ -39,9 +39,11 @@ This tutorial is made to understand the basic concepts of controlling a robot us
 ## Acknowledgments 
 This tutorial is partially inspired from [pac48](https://github.com/pac48/ros2_control_demos/tree/full-example-tutorial)'s tutorial and the official [ros2_control website](https://control.ros.org).
 
+This tutorial was created by Maciej Bednarczyk.
+
 ## Contacts ##
 ![icube](https://icube.unistra.fr/fileadmin/templates/DUN/icube/images/logo.png)
 
 [ICube Laboratory](https://icube.unistra.fr), [University of Strasbourg](https://www.unistra.fr/), France
 
-__Maciej Bednarczyk:__ [m.bednarczyk@unistra.fr](mailto:m.bednarczyk@unistra.fr), @github: [mcbed](mailto:macbednarczyk@gmail.com)
+__Manuel YGUEL:__ yguel @ unistra.fr, @github: yguel
