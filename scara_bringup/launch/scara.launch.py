@@ -20,7 +20,6 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    
     # Get URDF via xacro
     robot_description_content = Command(
         [
@@ -37,7 +36,7 @@ def generate_launch_description():
         [
             FindPackageShare('scara_description'),
             'config',
-            'scara_controllers.yaml',
+            'scara_controllers_tuto01.yaml',
         ]
     )
     rviz_config_file = PathJoinSubstitution(
@@ -48,6 +47,7 @@ def generate_launch_description():
         package='controller_manager',
         executable='ros2_control_node',
         parameters=[robot_description, robot_controllers],
+        arguments=['--ros-args', '--log-level', 'DEBUG'],
         output='both',
     )
     robot_state_pub_node = Node(
@@ -64,32 +64,34 @@ def generate_launch_description():
         arguments=['-d', rviz_config_file],
     )
 
-    joint_state_broadcaster_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['joint_state_broadcaster'],
-    )
+    # joint_state_broadcaster_spawner = Node(
+    #     package='controller_manager',
+    #     executable='spawner',
+    #     #arguments=['joint_state_broadcaster'],
+    #     arguments=['joint_state_broadcaster', '--ros-args', '--log-level', 'DEBUG'],
+    # )
 
-    robot_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['scara_joint_velocity_controller'],
-    )
+    # robot_controller_spawner = Node(
+    #     package='controller_manager',
+    #     executable='spawner',
+    #     #arguments=['scara_joint_velocity_controller'],
+    #     arguments=['scara_joint_velocity_controller','--ros-args', '--log-level', 'DEBUG'],
+    # )
 
-    slider_config = PathJoinSubstitution(
-        [
-            FindPackageShare('scara_bringup'),
-            'config',
-            'scara_vel_sp_config.yaml',
-        ]
-    )
+    # slider_config = PathJoinSubstitution(
+    #     [
+    #         FindPackageShare('scara_bringup'),
+    #         'config',
+    #         'scara_vel_sp_config.yaml',
+    #     ]
+    # )
 
-    slider_node = Node(
-        package='slider_publisher', 
-        executable='slider_publisher', 
-        name='slider_publisher',
-        parameters=[{'rate': 10.0}],
-        arguments = [slider_config])
+    # slider_node = Node(
+    #     package='slider_publisher',
+    #     executable='slider_publisher',
+    #     name='slider_publisher',
+    #     parameters=[{'rate': 10.0}],
+    #     arguments=[slider_config])
 
     nodes = [
         rviz_node,

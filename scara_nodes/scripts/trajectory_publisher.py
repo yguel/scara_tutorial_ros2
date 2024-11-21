@@ -6,11 +6,15 @@ import random
 
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
+
 class TrajectoryPublisher(Node):
 
     def __init__(self):
         super().__init__('trajectory_publisher')
-        self.publisher_ = self.create_publisher(JointTrajectory, '/scara_trajectory_controller/joint_trajectory', 1)
+        self.publisher_ = self.create_publisher(
+            JointTrajectory,
+            '/scara_trajectory_controller/joint_trajectory',
+            1)
         timer_period = 2  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.i = 0
@@ -18,7 +22,7 @@ class TrajectoryPublisher(Node):
     def timer_callback(self):
         msg = JointTrajectory()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.joint_names = ['joint1','joint2','joint3']
+        msg.joint_names = ['joint1', 'joint2', 'joint3']
         point = JointTrajectoryPoint()
         point.positions = [random.random()*3-1.5, random.random()*3-1.5, 0.1+random.random()*0.2]
         point.time_from_start.sec = 1

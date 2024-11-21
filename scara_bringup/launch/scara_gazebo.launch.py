@@ -22,7 +22,6 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    
     # Get URDF via xacro
     robot_description_content = Command(
         [
@@ -91,10 +90,10 @@ def generate_launch_description():
     )
 
     slider_node = Node(
-        package='slider_publisher', 
-        executable='slider_publisher', 
+        package='slider_publisher',
+        executable='slider_publisher',
         name='slider_publisher',
-        arguments = [slider_config])
+        arguments=[slider_config])
 
     nodes = [
         gazebo,
