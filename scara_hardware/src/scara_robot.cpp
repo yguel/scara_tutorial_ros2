@@ -28,7 +28,8 @@ CallbackReturn ScaraRobot::on_init(
   hw_states_position_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_states_velocity_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_states_effort_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
-  hw_states_previous_position_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  hw_states_previous_position_.resize(
+    info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_commands_position_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
 
   // Check description compatibility
@@ -41,14 +42,13 @@ CallbackReturn ScaraRobot::on_init(
         joint.command_interfaces.size());
       return CallbackReturn::ERROR;
     }
-    if (joint.command_interfaces[0].name != hardware_interface::HW_IF_POSITION)
-      {
-        RCLCPP_FATAL(
-          rclcpp::get_logger("ScaraRobot"),
-          "Joint '%s' has %s command interfaces. '%s' expected", joint.name.c_str(),
-          joint.command_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION);
-        return CallbackReturn::ERROR;
-      }
+    if (joint.command_interfaces[0].name != hardware_interface::HW_IF_POSITION) {
+      RCLCPP_FATAL(
+        rclcpp::get_logger("ScaraRobot"),
+        "Joint '%s' has %s command interfaces. '%s' expected", joint.name.c_str(),
+        joint.command_interfaces[0].name.c_str(), hardware_interface::HW_IF_POSITION);
+      return CallbackReturn::ERROR;
+    }
 
     if (joint.state_interfaces.size() != 2) {
       RCLCPP_FATAL(
@@ -91,13 +91,11 @@ ScaraRobot::export_state_interfaces()
     state_interfaces.emplace_back(
       hardware_interface::StateInterface(
         info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_states_position_[i]));
-
   }
   for (uint i = 0; i < info_.joints.size(); i++) {
     state_interfaces.emplace_back(
       hardware_interface::StateInterface(
         info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &hw_states_velocity_[i]));
-
   }
 
   return state_interfaces;
@@ -108,9 +106,9 @@ ScaraRobot::export_command_interfaces()
 {
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   for (uint i = 0; i < info_.joints.size(); i++) {
-      command_interfaces.emplace_back(
-        hardware_interface::CommandInterface(
-          info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_commands_position_[i]));
+    command_interfaces.emplace_back(
+      hardware_interface::CommandInterface(
+        info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_commands_position_[i]));
   }
 
   return command_interfaces;
@@ -121,7 +119,8 @@ hardware_interface::return_type ScaraRobot::read(
   const rclcpp::Duration & period)
 {
   for (uint i = 0; i < info_.joints.size(); i++) {
-    hw_states_velocity_[i] = (hw_states_position_[i] - hw_states_previous_position_[i])/(period.nanoseconds()*1e-9);
+    hw_states_velocity_[i] =
+      (hw_states_position_[i] - hw_states_previous_position_[i]) / (period.nanoseconds() * 1e-9);
 
     hw_states_previous_position_[i] = hw_states_position_[i];
   }
@@ -133,7 +132,7 @@ hardware_interface::return_type ScaraRobot::write(
   const rclcpp::Time & /*time*/,
   const rclcpp::Duration & /*period*/)
 {
-  // write hw_commands_position_ 
+  // write hw_commands_position_
   bool isNan = false;
   for (auto i = 0ul; i < hw_commands_position_.size(); i++) {
     if (hw_commands_position_[i] != hw_commands_position_[i]) {
@@ -148,8 +147,8 @@ hardware_interface::return_type ScaraRobot::write(
 
       hw_states_position_[i] = hw_commands_position_[i];
 
-      if(hw_states_position_[i] > max_position) hw_states_position_[i] = max_position;
-      if(hw_states_position_[i] < min_position) hw_states_position_[i] = min_position;
+      if (hw_states_position_[i] > max_position) {hw_states_position_[i] = max_position;}
+      if (hw_states_position_[i] < min_position) {hw_states_position_[i] = min_position;}
     }
   }
 

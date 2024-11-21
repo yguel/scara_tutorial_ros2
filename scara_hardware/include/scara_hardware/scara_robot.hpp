@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SCARA_HARDWARE__SCARA_SHI_FRI
-#define SCARA_HARDWARE__SCARA_SHI_FRI
+#ifndef SCARA_HARDWARE__SCARA_ROBOT_HPP_
+#define SCARA_HARDWARE__SCARA_ROBOT_HPP_
 
 #include <memory>
 #include <string>
@@ -62,9 +62,8 @@ private:
   std::vector<double> hw_states_previous_position_;
   std::vector<double> hw_states_velocity_;
   std::vector<double> hw_states_effort_;
-
 };
 
 }  // namespace scara_hardware
 
-#endif  // SCARA_HARDWARE__SCARA_SHI_FRI
+#endif  // SCARA_HARDWARE__SCARA_ROBOT_HPP_

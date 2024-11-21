@@ -57,13 +57,13 @@ public:
   CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
 
   SCARA_JOINT_VELOCITY_CONTROLLER_PUBLIC
-  CallbackReturn on_cleanup(const rclcpp_lifecycle::State &previous_state) override;
+  CallbackReturn on_cleanup(const rclcpp_lifecycle::State & previous_state) override;
 
   SCARA_JOINT_VELOCITY_CONTROLLER_PUBLIC
-  CallbackReturn on_error(const rclcpp_lifecycle::State &previous_state) override;
-  
+  CallbackReturn on_error(const rclcpp_lifecycle::State & previous_state) override;
+
   SCARA_JOINT_VELOCITY_CONTROLLER_PUBLIC
-  CallbackReturn on_shutdown(const rclcpp_lifecycle::State &previous_state) override;
+  CallbackReturn on_shutdown(const rclcpp_lifecycle::State & previous_state) override;
 
   SCARA_JOINT_VELOCITY_CONTROLLER_PUBLIC
   controller_interface::return_type update(
@@ -77,7 +77,6 @@ protected:
   rclcpp::Subscription<CmdType>::SharedPtr joints_command_subscriber_;
 
   std::string logger_name_;
-
 };
 
 }  // namespace scara_joint_velocity_controller

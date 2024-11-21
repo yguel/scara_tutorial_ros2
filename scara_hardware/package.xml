@@ -5,8 +5,8 @@
   <version>0.0.0</version>
   <description>Demo hardware for a scara robot for ros2_control.</description>
 
-  <author>Maciej Bednarczyk</author>
   <maintainer email="macbednarczyk@gmail.com">Maciej Bednarczyk</maintainer>
+  <maintainer email="yguel.robotics@gmail.com">Manuel YGUEL</maintainer>
 
   <license>Apache License 2.0</license>
 

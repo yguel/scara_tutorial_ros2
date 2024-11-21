@@ -61,7 +61,7 @@ CallbackReturn ScaraJointVelocityController::on_configure(
     RCLCPP_ERROR(get_node()->get_logger(), "'joints' parameter was empty");
     return CallbackReturn::FAILURE;
   }
- 
+
   // the desired cartesian velocity is queried from the joint_velocity topic
   // and passed to update via a rt pipe
   joints_command_subscriber_ = get_node()->create_subscription<CmdType>(
@@ -72,7 +72,7 @@ CallbackReturn ScaraJointVelocityController::on_configure(
   return CallbackReturn::SUCCESS;
 }
 // As the demo scara hardware interface only supports position commands, it can be directly
-// defined here without the need of getting as parameter. The position interface is then 
+// defined here without the need of getting as parameter. The position interface is then
 // affected to all controlled joints.
 controller_interface::InterfaceConfiguration
 ScaraJointVelocityController::command_interface_configuration() const
@@ -173,9 +173,8 @@ controller_interface::return_type ScaraJointVelocityController::update(
     return controller_interface::return_type::OK;
   }
 
-  //checking proxy data validity
-  if ((*joint_velocity)->data.size() != joint_names_.size())
-  {
+  // checking proxy data validity
+  if ((*joint_velocity)->data.size() != joint_names_.size()) {
     RCLCPP_ERROR_THROTTLE(
       get_node()->get_logger(),
       *get_node()->get_clock(), 1000, "command size does not match number of interfaces");
@@ -183,12 +182,12 @@ controller_interface::return_type ScaraJointVelocityController::update(
   }
 
   // the states are given in the same order as defines in state_interface_configuration
-  for(auto j = 0ul; j < joint_names_.size(); j++){
+  for (auto j = 0ul; j < joint_names_.size(); j++) {
     double q = state_interfaces_[j].get_value();
     double vq = (*joint_velocity)->data[j];
 
-    double command = q + vq*(period.nanoseconds()*1e-9);
-    
+    double command = q + vq * (period.nanoseconds() * 1e-9);
+
     command_interfaces_[j].set_value(command);
   }
 
@@ -200,4 +199,5 @@ controller_interface::return_type ScaraJointVelocityController::update(
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
-  scara_joint_velocity_controller::ScaraJointVelocityController, controller_interface::ControllerInterface)
+  scara_joint_velocity_controller::ScaraJointVelocityController,
+  controller_interface::ControllerInterface)
