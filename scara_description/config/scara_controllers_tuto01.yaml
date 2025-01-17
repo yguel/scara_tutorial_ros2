@@ -1,0 +1,16 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    scara_position_controller:
+      type: position_controllers/JointGroupPositionController
+
+scara_position_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+      - joint3
