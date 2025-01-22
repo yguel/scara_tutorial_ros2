@@ -28,7 +28,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name='xacro')]),
             ' ',
             PathJoinSubstitution(
-                [FindPackageShare('scara_description'), 'config', 'scara.config.xacro']
+                [FindPackageShare('scara_description'), 'config', 'scara.gazebo.config.xacro']
             ),
         ]
     )
@@ -36,6 +36,24 @@ def generate_launch_description():
 
     rviz_config_file = PathJoinSubstitution(
         [FindPackageShare('scara_description'), 'rviz', 'scara.rviz']
+    )
+
+    robot_controllers = PathJoinSubstitution(
+        [
+            FindPackageShare('scara_description'),
+            'config',
+            'scara_controllers.yaml',
+        ]
+    )
+
+    control_node = Node(
+        package='controller_manager',
+        executable='ros2_control_node',
+        parameters=[robot_description, 
+                    robot_controllers
+                    ],
+        arguments=['--ros-args', '--log-level', 'DEBUG'],
+        output='both',
     )
 
     robot_state_pub_node = Node(
@@ -81,6 +99,12 @@ def generate_launch_description():
         arguments=['scara_joint_velocity_controller'],
     )
 
+    # robot_position_controller_spawner = Node(
+    #     package='controller_manager',
+    #     executable='spawner',
+    #     arguments=['scara_position_controller'],
+    # )
+
     slider_config = PathJoinSubstitution(
         [
             FindPackageShare('scara_bringup'),
@@ -97,11 +121,13 @@ def generate_launch_description():
 
     nodes = [
         gazebo,
+        control_node,
         robot_state_pub_node,
         spawn_entity,
         rviz_node,
         joint_state_broadcaster_spawner,
         robot_controller_spawner,
+        #robot_position_controller_spawner,
         slider_node
     ]
 

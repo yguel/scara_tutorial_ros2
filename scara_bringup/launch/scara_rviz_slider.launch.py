@@ -14,6 +14,8 @@
 
 from launch import LaunchDescription
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -32,27 +34,28 @@ def generate_launch_description():
     )
     robot_description = {'robot_description': robot_description_content}
 
-    0
     rviz_config_file = PathJoinSubstitution(
         [FindPackageShare('scara_description'), 'rviz', 'scara.rviz']
     )
-
 
     robot_controllers = PathJoinSubstitution(
         [
             FindPackageShare('scara_description'),
             'config',
-            'scara_controllers_tuto01.yaml',
+            'scara_controllers.yaml',
         ]
     )
 
     control_node = Node(
         package='controller_manager',
         executable='ros2_control_node',
-        parameters=[robot_description, robot_controllers],
+        parameters=[robot_description, 
+                    robot_controllers
+                    ],
         arguments=['--ros-args', '--log-level', 'DEBUG'],
         output='both',
     )
+
     robot_state_pub_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -67,42 +70,58 @@ def generate_launch_description():
         arguments=['-d', rviz_config_file],
     )
 
-    # joint_state_broadcaster_spawner = Node(
-    #     package='controller_manager',
-    #     executable='spawner',
-    #     #arguments=['joint_state_broadcaster'],
-    #     arguments=['joint_state_broadcaster', '--ros-args', '--log-level', 'DEBUG'],
+    # gazebo = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         [PathJoinSubstitution(
+    #             [FindPackageShare('gazebo_ros'),
+    #                 'launch', 'gazebo.launch.py']
+    #         )]
+    #     ),
+    #     launch_arguments={'verbose': 'false'}.items(),
     # )
 
-    # robot_controller_spawner = Node(
-    #     package='controller_manager',
-    #     executable='spawner',
-    #     #arguments=['scara_joint_velocity_controller'],
-    #     arguments=['scara_joint_velocity_controller','--ros-args', '--log-level', 'DEBUG'],
-    # )
+    spawn_entity = Node(
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        arguments=['-topic', robot_description, '-entity', 'scara'],
+        output='screen',
+    )
 
-    # slider_config = PathJoinSubstitution(
-    #     [
-    #         FindPackageShare('scara_bringup'),
-    #         'config',
-    #         'scara_vel_sp_config.yaml',
-    #     ]
-    # )
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_state_broadcaster'],
+    )
 
-    # slider_node = Node(
-    #     package='slider_publisher',
-    #     executable='slider_publisher',
-    #     name='slider_publisher',
-    #     parameters=[{'rate': 10.0}],
-    #     arguments=[slider_config])
+    robot_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['scara_joint_velocity_controller'],
+    )
+
+    slider_config = PathJoinSubstitution(
+        [
+            FindPackageShare('scara_bringup'),
+            'config',
+            'scara_vel_sp_config.yaml',
+        ]
+    )
+
+    slider_node = Node(
+        package='slider_publisher',
+        executable='slider_publisher',
+        name='slider_publisher',
+        arguments=[slider_config])
 
     nodes = [
-        rviz_node,
+        # gazebo,
         control_node,
         robot_state_pub_node,
-        # joint_state_broadcaster_spawner,
-        # robot_controller_spawner,
-        # slider_node,
+        spawn_entity,
+        rviz_node,
+        joint_state_broadcaster_spawner,
+        robot_controller_spawner,
+        slider_node
     ]
 
     return LaunchDescription(nodes)
